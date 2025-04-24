@@ -1,0 +1,26 @@
+.ftco-appointment {
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    padding: 5rem 0;
+  }
+  
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+  }
+  
+  .form-box {
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    position: relative;
+    z-index: 2;
+    color: #000; /* ensure text is visible */
+  }
+  

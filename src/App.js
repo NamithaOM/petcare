@@ -1,24 +1,88 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Landing from "./Auth/Landing";
+import About from "./Auth/About";
+import Footer from "./Auth/Footer";
+import Header from "./Auth/Header";
+import Contact from "./Auth/Contact";
+import Details from "./Auth/Details";
+import Price from "./Auth/Price";
+import Forms from "./Auth/Forms";
+import Register from "./Auth/Register";
+import Login from "./Auth/Login";
+import Dashboard from "./User/Dashboard";
+import Trainers from "./User/Trainers";
+import Doctors from "./User/Doctors";
+import Grooming from "./User/Grooming";
+import Medicines from "./User/Medicines";
+import FoodItems from "./User/FoodItems";
+import Accessories from "./User/Accessories";
+import DoctorProfile from "./User/DoctorProfile";
+import TrainerProfile from "./User/TrainerProfile";
+import GroomingDetails from "./User/GroomingDetails";
+import MedicineDetails from "./User/MedicineDetails";
+import PetDetails from "./User/PetDetails";
+import PetProfile from "./User/PetProfile";
+import UpdatePetDetails from "./User/UpdatePetDetails";
+import AccessoryDetails from "./User/AccessoryDetails";
+import DoctorBookings from "./User/DoctorBookings";
+import Message from "./User/Message";
+import TrainerBookings from "./User/TrainerBookings";
+import GroomingBooking from "./User/GroomingBooking";
+import ViewCart from "./User/ViewCart";
 
 function App() {
+  const [userType] = useState(localStorage.getItem("userType"));
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        {userType == null ? (
+          <>
+            <Route path="/" element={<Landing />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/header" element={<Header />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/footer" element={<Footer />} />
+            <Route path="/price" element={<Price />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/forms" element={<Forms />} />
+            <Route path="/details" element={<Details />} />
+          </>
+        ) : userType === "customer" ? (
+          <>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/trainer" element={<Trainers />} />
+            <Route path="/doctor" element={<Doctors />} />
+            <Route path="/grooming" element={<Grooming />} />
+            <Route path="/medicine" element={<Medicines />} />
+            <Route path="/food" element={<FoodItems />} />
+            <Route path="/accessories" element={<Accessories />} />
+            <Route path="/doctor-profile/:id" element={<DoctorProfile />} />
+            <Route path="/trainer-profile/:id" element={<TrainerProfile />} />
+            <Route path="/grooming-details/:id" element={<GroomingDetails />} />
+            <Route path="/medicine-details/:id" element={<MedicineDetails />} />
+            <Route path="/accessory-details/:id" element={<AccessoryDetails />} />
+            <Route path="/drBooking" element={<DoctorBookings />} />
+            <Route path="/trainerBooking" element={<TrainerBookings />} />
+            <Route path="/groomingBooking" element={<GroomingBooking />} />
+            <Route path="/messages" element={<Message />} />
+            <Route path="/petdetails" element={<PetDetails />} />
+            <Route path="/petprofile" element={<PetProfile />} />
+            <Route path="/updatepet/:id" element={<UpdatePetDetails />} />
+            <Route path="/cart" element={<ViewCart />} />
+
+
+            <Route path="*" element={<Dashboard />} />
+          </>
+        ) : (
+          <>
+            <Route path="*" element={<Login />} />
+          </>
+        )}
+      </Routes>
+    </BrowserRouter>
   );
 }
 
