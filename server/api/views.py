@@ -51,6 +51,16 @@ def allusers(request):
 
     return JsonResponse({'users': user_list}, status=200)
 
+@csrf_exempt
+def unblockuser(request, user_id):
+    try:
+        user_data = UserData.objects.get(id=user_id)
+        user = user_data.userid
+        user.is_active = True
+        user.save()
+        return JsonResponse({'message': 'User has been unblocked.'})
+    except UserData.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
 
 @csrf_exempt
 def deleteuser(request, user_id):
@@ -374,7 +384,18 @@ def allDoctors(request):
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
-
+    
+@csrf_exempt
+def deleteDoctor(request, doctor_id):
+    if request.method == 'DELETE':
+        try:
+            doctor = Doctordetails.objects.get(id=doctor_id)
+            doctor.delete()
+            return JsonResponse({'message': 'Doctor deleted successfully.'})
+        except Doctordetails.DoesNotExist:
+            return JsonResponse({'error': 'Doctor not found.'}, status=404)
+    else:
+        return JsonResponse({'error': 'Invalid request method.'}, status=400)
 
 @csrf_exempt
 def list_doctors(request):
@@ -514,6 +535,19 @@ def alltrainers(request):
         })
 
     return JsonResponse({'Trainers': data}, safe=False)
+
+
+@csrf_exempt
+def deleteTrainer(request, trainer_id):
+    if request.method == 'DELETE':
+        try:
+            trainer = Trainerdetails.objects.get(id=trainer_id)
+            trainer.delete()
+            return JsonResponse({'message': 'Trainer deleted successfully.'})
+        except Trainerdetails.DoesNotExist:
+            return JsonResponse({'error': 'Trainer not found.'}, status=404)
+    else:
+        return JsonResponse({'error': 'Invalid request method.'}, status=400)
 
 @csrf_exempt
 def view_trainers_by_user(request, userid):

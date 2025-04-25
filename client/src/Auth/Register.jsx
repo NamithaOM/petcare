@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Header from './Header';
 import Footer from './Footer';
+import { baseUrl } from "../util/BaseUrl";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -25,7 +26,7 @@ export default function Register() {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:8000/createCustomer/', {
+      const response = await fetch(`${baseUrl}createCustomer/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

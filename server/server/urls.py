@@ -26,6 +26,7 @@ urlpatterns = [
     path('allusers/', views.allusers),
     path('blockuser/<int:user_id>/', views.blockuser),
     path('deleteuser/<int:user_id>/', views.deleteuser),
+    path('unblockuser/<int:user_id>/', views.unblockuser, name='unblockuser'),
     path('createUser/', views.createUser),
     path('login', views.loginUser),
     path('logout', views.logoutUser), 
@@ -61,7 +62,7 @@ urlpatterns = [
     path('deleteDoctor/<int:id>/', views.delete_doctor),
     # for userview
     path('allDoctors/', views.allDoctors),
-
+    path('deleteDoctor/<int:doctor_id>/', views.deleteDoctor, name='deleteDoctor'),
 
 # trainer crud
     path('addTrainer/', views.create_Trainer),
@@ -71,7 +72,7 @@ urlpatterns = [
     path('deleteTrainer/<int:id>/', views.delete_Trainer),
     # for user view
     path('allTrainers/', views.alltrainers),
-
+    path('deleteTrainer/<int:trainer_id>/', views.deleteTrainer, name='deleteTrainer'),
 # All groomings
     path('groomingList/', views.list_Grooming),
     path('addGrooming/', views.create_Grooming),

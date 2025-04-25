@@ -32,6 +32,9 @@ export default function Header() {
     setIsLoggedIn(false);
     setUserType(null);
     navigate("/");
+    setTimeout(() => {
+      window.location.reload();
+    }, 100); // Give navigation a moment before reloading
   };
 
   return (

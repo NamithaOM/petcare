@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../Auth/Header';
 import Footer from '../Auth/Footer';
-
+import { baseUrl } from "../util/BaseUrl";
 export default function GroomingBooking() {
   const storedUserId = localStorage.getItem("userId");
   const [bookings, setBookings] = useState([]);
@@ -12,7 +12,7 @@ export default function GroomingBooking() {
       return;
     }
 
-    fetch(`http://localhost:8000/view-grooming-booking/${storedUserId}`)
+    fetch(`${baseUrl}view-grooming-booking/${storedUserId}`)
       .then(res => res.json())
       .then(data => {
         if (data.bookings) {

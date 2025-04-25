@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../Auth/Header';
 import Footer from '../Auth/Footer';
-
+import { baseUrl } from "../util/BaseUrl";
 export default function DoctorBookings() {
   const storedUserId = localStorage.getItem("userId");
   const [bookings, setBookings] = useState([]);
@@ -12,7 +12,7 @@ export default function DoctorBookings() {
       return;
     }
 
-    fetch(`http://localhost:8000/view-doctor-booking/${storedUserId}`)
+    fetch(`${baseUrl}view-doctor-booking/${storedUserId}`)
       .then(res => res.json())
       .then(data => {
         if (data.bookings) {

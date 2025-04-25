@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';
-
+import { baseUrl } from "../util/BaseUrl";
 export default function Login() {
   const [credentials, setCredentials] = useState({
     username: '',
@@ -23,7 +23,7 @@ export default function Login() {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:8000/login', {
+      const response = await fetch(`${baseUrl}login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -40,6 +40,9 @@ export default function Login() {
         localStorage.setItem('userId', data.user_id);
         // Redirect or navigate as needed
         navigate('/');
+        setTimeout(() => {
+          window.location.reload();
+        }, 100); // Give navigation a moment before reloading
       } else {
         setError(data.error || 'Login failed');
       }

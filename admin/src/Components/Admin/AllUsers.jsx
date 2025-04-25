@@ -1,45 +1,63 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Sidebar from '../Auth/Sidebar';
-import Header from '../Auth/Header';
-import { baseUrl } from '../../util/BaseUrl';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Sidebar from "../Auth/Sidebar";
+import Header from "../Auth/Header";
+import { baseUrl } from "../../util/BaseUrl";
 
 export default function AllUsers() {
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(baseUrl + 'allusers/')
+    fetch(baseUrl + "allusers/")
       .then((res) => res.json())
-      .then((data) => setUsers(data.users))  // ✅ key was 'users'
+      .then((data) => setUsers(data.users)) // ✅ key was 'users'
       .catch((err) => console.error("Error fetching users:", err));
   }, []);
 
   const handleBlock = (userId) => {
     fetch(baseUrl + `blockuser/${userId}/`, {
-      method: 'PUT',
+      method: "PUT",
     })
       .then((res) => res.json())
       .then((data) => {
         alert(data.message);
         // Refresh list
-        setUsers(users.map(user => 
-          user.id === userId ? { ...user, is_active: 0 } : user
-        ));
+        setUsers(
+          users.map((user) =>
+            user.id === userId ? { ...user, is_active: 0 } : user
+          )
+        );
+      });
+  };
+
+  const handleUnblock = (userId) => {
+    fetch(baseUrl + `unblockuser/${userId}/`, {
+      method: "PUT",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        alert(data.message);
+        // Refresh list
+        setUsers(
+          users.map((user) =>
+            user.id === userId ? { ...user, is_active: 1 } : user
+          )
+        );
       });
   };
 
   const handleDelete = (userId) => {
-    if (!window.confirm('Are you sure you want to delete this user?')) return;
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
 
     fetch(baseUrl + `deleteuser/${userId}/`, {
-      method: 'DELETE',
+      method: "DELETE",
     })
       .then((res) => res.json())
       .then((data) => {
         alert(data.message);
         // Remove user from list
-        setUsers(users.filter(user => user.id !== userId));
+        setUsers(users.filter((user) => user.id !== userId));
       });
   };
 
@@ -53,7 +71,11 @@ export default function AllUsers() {
             <h1 className="h3 mb-4 text-gray-800">User List</h1>
             <div className="card-body">
               <div className="table-responsive">
-                <table className="table table-bordered" width="100%" cellSpacing="0">
+                <table
+                  className="table table-bordered"
+                  width="100%"
+                  cellSpacing="0"
+                >
                   <thead>
                     <tr>
                       <th>Name</th>
@@ -71,7 +93,9 @@ export default function AllUsers() {
                         <td>{user.email}</td>
                         <td>{user.contact}</td>
                         <td>{user.usertype}</td>
-                        <td>{user.is_active === false ? 'Blocked' : 'Active'}</td>
+                        <td>
+                          {user.is_active === false ? "Blocked" : "Active"}
+                        </td>
                         <td>
                           <button
                             className="btn btn-danger btn-sm mr-2"
@@ -79,19 +103,30 @@ export default function AllUsers() {
                           >
                             Delete
                           </button>
-                          <button
-                            className="btn btn-dark btn-sm"
-                            onClick={() => handleBlock(user.id)}
-                            disabled={user.is_active === 0}
-                          >
-                            Block
-                          </button>
+
+                          {user.is_active ? (
+                            <button
+                              className="btn btn-dark btn-sm"
+                              onClick={() => handleBlock(user.id)}
+                            >
+                              Block
+                            </button>
+                          ) : (
+                            <button
+                              className="btn btn-success btn-sm"
+                              onClick={() => handleUnblock(user.id)}
+                            >
+                              Unblock
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))}
                     {users.length === 0 && (
                       <tr>
-                        <td colSpan="6" className="text-center">No users found.</td>
+                        <td colSpan="6" className="text-center">
+                          No users found.
+                        </td>
                       </tr>
                     )}
                   </tbody>

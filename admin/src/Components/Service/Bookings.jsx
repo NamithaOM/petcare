@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../Auth/Sidebar";
 import Header from "../Auth/Header";
 import { useNavigate } from "react-router-dom";
+import { baseUrl } from "../../util/BaseUrl";
 
 export default function Bookings() {
   const [formData, setFormData] = useState({ userid: "" });
@@ -24,7 +25,7 @@ export default function Bookings() {
   const fetchTrainerBookings = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8000/get_trainer_bookings_by_service_center",
+        `${baseUrl}get_trainer_bookings_by_service_center`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -45,7 +46,7 @@ export default function Bookings() {
   const fetchDoctorBookings = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8000/get_doctor_bookings_by_service_center",
+        `${baseUrl}get_doctor_bookings_by_service_center`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -66,7 +67,7 @@ export default function Bookings() {
   const fetchGroomingBookings = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8000/get_grooming_bookings_by_service_center",
+        `${baseUrl}get_grooming_bookings_by_service_center`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
