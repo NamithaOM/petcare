@@ -177,39 +177,43 @@ def logoutUser(request):
 
 @csrf_exempt
 def create_pet(request):
-    try:
-        data = json.loads(request.body)
-        petname = data.get('petname')
+    if request.method == 'POST':
+        petname = request.POST.get('petname')
+        petimage = request.FILES.get('petimage')  # Get uploaded image
 
-            # Check if pet name already exists
+        if not petname:
+            return JsonResponse({'error': 'Pet name is required'}, status=400)
+
         if PetList.objects.filter(petname=petname).exists():
             return JsonResponse({'error': 'Pet already exists'}, status=400)
 
-            # Create pet entry
-        pet = PetList.objects.create(petname=petname)
+        pet = PetList.objects.create(petname=petname, petimage=petimage)
         return JsonResponse({'message': 'Pet created successfully', 'id': pet.id}, status=201)
 
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
 @csrf_exempt
 def update_pet(request, pet_id):
-    try:
-        data = json.loads(request.body)
-        petname = data.get('petname')
+    if request.method == "POST" or request.method == "PUT":
+        petname = request.POST.get('petname')
+        petimage = request.FILES.get('petimage')  # Handle file upload
 
-        pet = PetList.objects.get(id=pet_id)
-        pet.petname = petname
-        pet.save()
+        try:
+            pet = PetList.objects.get(id=pet_id)
 
-        return JsonResponse({'message': 'Pet updated successfully'})
+            if petname:
+                pet.petname = petname
+            if petimage:
+                pet.petimage = petimage
 
-    except PetList.DoesNotExist:
-        return JsonResponse({'error': 'Pet not found'}, status=404)
+            pet.save()
+            return JsonResponse({'message': 'Pet updated successfully'})
 
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+        except PetList.DoesNotExist:
+            return JsonResponse({'error': 'Pet not found'}, status=404)
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
 @csrf_exempt
@@ -230,37 +234,31 @@ def list_pets(request):
 
 @csrf_exempt
 def create_service(request):
-    try:
-        data = json.loads(request.body)
-        servicename = data.get('servicename')
+    if request.method == 'POST':
+        servicename = request.POST.get('servicename')
+        serviceimage = request.FILES.get('serviceimage')
 
         if Service.objects.filter(servicename=servicename).exists():
             return JsonResponse({'error': 'Service already exists'}, status=400)
 
-        service = Service.objects.create(servicename=servicename)
+        service = Service.objects.create(servicename=servicename, serviceimage=serviceimage)
         return JsonResponse({'message': 'Service created successfully', 'id': service.id}, status=201)
 
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
-
 @csrf_exempt
-def update_servicename(request, service_id):  # Accept service_id as a parameter
-    try:
-        data = json.loads(request.body)
-        servicename = data.get('servicename')
+def update_servicename(request, service_id):
+    if request.method == 'POST':
+        servicename = request.POST.get('servicename')
+        serviceimage = request.FILES.get('serviceimage')
 
-        service = Service.objects.get(id=service_id)  # Use service_id
-        service.servicename = servicename
-        service.save()
-
-        return JsonResponse({'message': 'Service updated successfully'})
-
-    except Service.DoesNotExist:
-        return JsonResponse({'error': 'Service not found'}, status=404)
-
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
-
+        try:
+            service = Service.objects.get(id=service_id)
+            service.servicename = servicename
+            if serviceimage:
+                service.serviceimage = serviceimage
+            service.save()
+            return JsonResponse({'message': 'Service updated successfully'})
+        except Service.DoesNotExist:
+            return JsonResponse({'error': 'Service not found'}, status=404)
 @csrf_exempt
 def delete_servicename(request, service_id):  # Accept service_id as a parameter
     try:
@@ -278,36 +276,40 @@ def list_servicename(request):
 
 @csrf_exempt
 def create_Item(request):
-    try:
-        data = json.loads(request.body)
-        itemname = data.get('itemname')
+    if request.method == 'POST':
+        itemname = request.POST.get('itemname')
+        itemimage = request.FILES.get('itemimage')
 
         if StoreItems.objects.filter(itemname=itemname).exists():
-            return JsonResponse({'error': 'Service already exists'}, status=400)
+            return JsonResponse({'error': 'Item already exists'}, status=400)
 
-        item = StoreItems.objects.create(itemname=itemname)
-        return JsonResponse({'message': 'Service created successfully', 'id': item.id}, status=201)
+        item = StoreItems.objects.create(itemname=itemname, itemimage=itemimage)
+        return JsonResponse({'message': 'Item created successfully', 'id': item.id}, status=201)
 
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
 
 @csrf_exempt
-def update_Item(request, item_id):  # Accept item_id as a parameter
-    try:
-        data = json.loads(request.body)
-        itemname = data.get('itemname')
+def update_Item(request, item_id):
+    if request.method == 'POST':
+        try:
+            item = StoreItems.objects.get(id=item_id)
+        except StoreItems.DoesNotExist:
+            return JsonResponse({'error': 'Item not found'}, status=404)
 
-        item = StoreItems.objects.get(id=item_id)  # Use item_id
-        item.itemname = itemname
+        itemname = request.POST.get('itemname')
+        itemimage = request.FILES.get('itemimage')
+
+        if itemname:
+            item.itemname = itemname
+        if itemimage:
+            item.itemimage = itemimage
+
         item.save()
-
         return JsonResponse({'message': 'Item updated successfully'})
 
-    except StoreItems.DoesNotExist:
-        return JsonResponse({'error': 'item not found'}, status=404)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
 
 @csrf_exempt
 def list_Item(request):
@@ -1194,6 +1196,7 @@ def create_accessory(request):
             petid = request.POST.get("petid")
             userid = request.POST.get("userid")
             image = request.FILES.get("image")
+            category = request.POST.get("category") 
             description = request.POST.get("description")
 
             if not all([accessory_name, brand, price, stock, petid, userid, image, description]):
@@ -1208,6 +1211,7 @@ def create_accessory(request):
                 price=price,
                 stock=stock,
                 count=stock,
+                category=category,
                 pet=pet,
                 user=user,
                 image=image,
@@ -1246,6 +1250,7 @@ def allaccessory(request):
                 "price": float(acc.price),
                 "stock": acc.stock,
                 "count": acc.count,
+                "category":acc.category,
                 "description": acc.description,
                 "image": acc.image.url if acc.image else None,
                 "pet_id": acc.pet.id,
@@ -1281,6 +1286,7 @@ def view_accessories_by_user(request, userid):
                     "id": accessory.id,
                     "accessory_name": accessory.accessory_name,
                     "brand": accessory.brand,
+                    "category":accessory.category,
                     "price": float(accessory.price),
                     "stock": accessory.stock,
                     "description": accessory.description,
@@ -1307,6 +1313,7 @@ def get_accessory(request, accessoryid):
                 "brand": accessory.brand,
                 "price": float(accessory.price),
                 "stock": accessory.stock,
+                "category": accessory.category,
                 "description": accessory.description,
                 "petid": accessory.pet.id,
                 "userid": accessory.user.id,
@@ -1324,6 +1331,7 @@ def edit_accessory(request, accessoryid):
             accessory = Accessory.objects.get(id=accessoryid)
             accessory.accessory_name = request.POST.get("accessory_name", accessory.accessory_name)
             accessory.brand = request.POST.get("brand", accessory.brand)
+            accessory.category = request.POST.get("category", accessory.category)
             accessory.price = request.POST.get("price", accessory.price)
             accessory.stock = request.POST.get("stock", accessory.stock)
             accessory.description = request.POST.get("description", accessory.description)
@@ -1384,6 +1392,60 @@ def createCustomer(request):
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+@csrf_exempt
+def getCustomerProfile(request, user_id):
+    if request.method == 'GET':
+        try:
+            customer = CustomerData.objects.get(userid=user_id)
+            profile_data = {
+                'id': customer.id,
+                'name': customer.name,
+                'gender': customer.gender,
+                'contact': customer.contact,
+                'address': customer.address,
+                'usertype': customer.usertype,
+                'dob': customer.dob.strftime('%Y-%m-%d') if customer.dob else None,  # format dob nicely
+                'createdAt': customer.createdAt.strftime('%Y-%m-%d %H:%M:%S') if customer.createdAt else None,
+                'image_url': customer.image.url if customer.image else None,
+            }
+            return JsonResponse({'profile': profile_data}, status=200)
+        except CustomerData.DoesNotExist:
+            return JsonResponse({'error': 'Profile not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+@csrf_exempt
+def updateCustomerProfile(request, user_id):
+    if request.method == 'POST':
+        try:
+            customer = CustomerData.objects.get(userid=user_id)
+
+            customer.name = request.POST.get('name', customer.name)
+            customer.gender = request.POST.get('gender', customer.gender)
+            customer.contact = request.POST.get('contact', customer.contact)
+            customer.address = request.POST.get('address', customer.address)
+            dob = request.POST.get('dob')
+            if dob:
+                customer.dob = dob
+
+            if 'image' in request.FILES:
+                customer.image = request.FILES['image']
+
+            customer.save()
+
+            return JsonResponse({'message': 'Profile updated successfully'}, status=200)
+
+        except CustomerData.DoesNotExist:
+            return JsonResponse({'error': 'Profile not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
 
 @csrf_exempt
 def check_doctor_booking_availability(request):

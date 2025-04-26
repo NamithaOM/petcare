@@ -32,6 +32,9 @@ import GroomingBooking from "./User/GroomingBooking";
 import ViewCart from "./User/ViewCart";
 import FoodDetails from "./User/FoodDetails";
 import Order from "./User/Order";
+import Profile from "./User/Profile";
+import UpdateProfile from "./User/UpdateProfile";
+import New from "./Auth/New";
 
 function App() {
   const [userType] = useState(localStorage.getItem("userType"));
@@ -46,11 +49,12 @@ function App() {
             <Route path="/header" element={<Header />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/footer" element={<Footer />} />
-            <Route path="/price" element={<Price />} />
+            <Route path="/service" element={<Price />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/forms" element={<Forms />} />
             <Route path="/details" element={<Details />} />
+            <Route path="/new" element={<New />} />
           </>
         ) : userType === "customer" ? (
           <>
@@ -76,6 +80,8 @@ function App() {
             <Route path="/updatepet/:id" element={<UpdatePetDetails />} />
             <Route path="/cart" element={<ViewCart />} />
             <Route path="/order" element={<Order />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/updateprofile/:id" element={<UpdateProfile />} />
 
 
 

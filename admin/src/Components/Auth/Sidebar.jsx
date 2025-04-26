@@ -163,12 +163,12 @@ export default function Sidebar() {
         )}
 
         {/* Logout menu item */}
-        <li className="nav-item">
+        {/* <li className="nav-item">
           <button className="nav-link" onClick={handleLogout}>
             <i className="fas fa-fw fa-sign-out-alt"></i>
             <span>Logout</span>
           </button>
-        </li>
+        </li> */}
       </ul>
     </>
   );

@@ -5,8 +5,11 @@ import { baseUrl } from "../../util/BaseUrl";
 
 export default function ServiceList() {
   const [services, setServices] = useState([]);
-  const [formData, setFormData] = useState({ servicename: "" });
   const [editingService, setEditingService] = useState(null); // Track service being edited
+  const [formData, setFormData] = useState({
+    servicename: "",
+    serviceimage: null,
+  });
 
   // Fetch services from backend
   useEffect(() => {
@@ -14,47 +17,60 @@ export default function ServiceList() {
       .then((res) => res.json())
       .then((data) => setServices(data.servicename))
       .catch((error) => console.error("Error fetching services:", error));
-  }, []);
+  }, [services]);
 
   // Handle input change
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, files } = e.target;
+    if (name === "serviceimage") {
+      setFormData({ ...formData, serviceimage: files[0] });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   // Handle form submission (Create or Update)
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+    const data = new FormData();
+    data.append("servicename", formData.servicename);
+    if (formData.serviceimage) {
+      data.append("serviceimage", formData.serviceimage);
+    }
+
     if (editingService) {
-      // Update service
       fetch(`${baseUrl}update_servicename/${editingService}/`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        method: "POST",
+        body: data,
       })
         .then((res) => res.json())
         .then((data) => {
           if (data.message) {
-            setServices(services.map(service =>
-              service.id === editingService ? { id: service.id, servicename: formData.servicename } : service
-            ));
+            setServices((prev) =>
+              prev.map((service) =>
+                service.id === editingService
+                  ? { ...service, servicename: formData.servicename }
+                  : service
+              )
+            );
             setEditingService(null);
-            setFormData({ servicename: "" });
+            setFormData({ servicename: "", serviceimage: null });
           }
         })
         .catch((error) => console.error("Error updating service:", error));
     } else {
-      // Create service
       fetch(`${baseUrl}create_servicename/`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: data,
       })
         .then((res) => res.json())
         .then((data) => {
           if (data.message) {
-            setServices([...services, { id: data.id, servicename: formData.servicename }]);
-            setFormData({ servicename: "" });
+            setServices([
+              ...services,
+              { id: data.id, servicename: formData.servicename },
+            ]);
+            setFormData({ servicename: "", serviceimage: null });
           }
         })
         .catch((error) => console.error("Error adding service:", error));
@@ -67,7 +83,7 @@ export default function ServiceList() {
       method: "DELETE",
     })
       .then((res) => res.json())
-      .then(() => setServices(services.filter(service => service.id !== id)))
+      .then(() => setServices(services.filter((service) => service.id !== id)))
       .catch((error) => console.error("Error deleting service:", error));
   };
 
@@ -101,7 +117,19 @@ export default function ServiceList() {
                       placeholder="Enter service name"
                     />
                   </div>
-                  <button type="submit" className="btn btn-primary btn-user btn-block">
+                  <div className="form-group">
+                    <input
+                      type="file"
+                      className="form-control form-control-user"
+                      id="serviceimage"
+                      name="serviceimage"
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="btn btn-primary btn-user btn-block"
+                  >
                     {editingService ? "Update" : "Submit"}
                   </button>
                 </form>
@@ -109,13 +137,20 @@ export default function ServiceList() {
               <div className="row">
                 <div className="card shadow mb-4">
                   <div className="card-header py-3">
-                    <h6 className="m-0 font-weight-bold text-primary">Services</h6>
+                    <h6 className="m-0 font-weight-bold text-primary">
+                      Services
+                    </h6>
                   </div>
                   <div className="card-body">
                     <div className="table-responsive">
-                      <table className="table table-bordered" width="100%" cellSpacing="0">
+                      <table
+                        className="table table-bordered"
+                        width="100%"
+                        cellSpacing="0"
+                      >
                         <thead>
                           <tr>
+                            <th></th>
                             <th>Name</th>
                             <th>Actions</th>
                           </tr>
@@ -123,10 +158,45 @@ export default function ServiceList() {
                         <tbody>
                           {services.map((service) => (
                             <tr key={service.id}>
+                              <td>
+                                {service.serviceimage ? (
+                                  <img
+                                    src={
+                                      service.serviceimage.startsWith("/media/")
+                                        ? baseUrl + service.serviceimage
+                                        : baseUrl +
+                                          "media/" +
+                                          service.serviceimage.replace(
+                                            /^\/+/,
+                                            ""
+                                          )
+                                    }
+                                    style={{
+                                      width: "100px",
+                                      height: "100px",
+                                      objectFit: "cover",
+                                    }}
+                                  />
+                                ) : (
+                                  "No Image"
+                                )}
+                              </td>
                               <td>{service.servicename}</td>
                               <td>
-                                <button className="btn btn-success mx-2" onClick={() => editService(service.id, service.servicename)}>Edit</button>
-                                <button className="btn btn-danger" onClick={() => deleteService(service.id)}>Delete</button>
+                                <button
+                                  className="btn btn-success mx-2"
+                                  onClick={() =>
+                                    editService(service.id, service.servicename)
+                                  }
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  className="btn btn-danger"
+                                  onClick={() => deleteService(service.id)}
+                                >
+                                  Delete
+                                </button>
                               </td>
                             </tr>
                           ))}

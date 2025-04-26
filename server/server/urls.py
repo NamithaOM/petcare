@@ -111,6 +111,8 @@ urlpatterns = [
 
 # customer registeration
     path('createCustomer/', views.createCustomer, name='create-customer'),
+    path('profile/<int:user_id>/', views.getCustomerProfile, name='get_customer_profile'),
+    path('updateprofile/<int:user_id>/', views.updateCustomerProfile, name='update_customer_profile'),
     path('create-doctor-booking/', views.create_doctor_booking),
     path('view-doctor-booking/<int:userid>', views.view_doctor_booking),
     path('check-doctor-booking-availability/', views.check_doctor_booking_availability),

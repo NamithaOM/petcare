@@ -5,7 +5,7 @@ import { baseUrl } from "../../util/BaseUrl";
 
 export default function PetsList() {
   const [pets, setPets] = useState([]);
-  const [formData, setFormData] = useState({ petname: "" });
+  const [formData, setFormData] = useState({ petname: "", petimage: null });
   const [message, setMessage] = useState("");
 
   // Fetch pets list
@@ -25,25 +25,35 @@ export default function PetsList() {
 
   // Handle form input changes
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, files } = e.target;
+    if (name === "petimage") {
+      setFormData({ ...formData, petimage: files[0] });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
-  // Create pet
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
 
+    const formPayload = new FormData();
+    formPayload.append("petname", formData.petname);
+    if (formData.petimage) {
+      formPayload.append("petimage", formData.petimage);
+    }
+
     try {
       const response = await fetch(baseUrl + "create_pet/", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: formPayload,
       });
 
       const data = await response.json();
       if (response.ok) {
         setMessage(data.message);
-        fetchPets(); // Refresh the list
+        setFormData({ petname: "", petimage: null }); // reset form
+        fetchPets();
       } else {
         setMessage(data.error || "Something went wrong");
       }
@@ -53,12 +63,17 @@ export default function PetsList() {
   };
 
   // Update pet
-  const handleUpdate = async (petId, newName) => {
+  const handleUpdate = async (petId, newName, newImage) => {
+    const formPayload = new FormData();
+    formPayload.append("petname", newName);
+    if (newImage) {
+      formPayload.append("petimage", newImage);
+    }
+
     try {
       const response = await fetch(baseUrl + `update_pet/${petId}/`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ petname: newName }),
+        method: "POST", // use POST or PUT, depending on your Django view
+        body: formPayload,
       });
 
       const data = await response.json();
@@ -119,6 +134,15 @@ export default function PetsList() {
                       placeholder="Enter pet Category"
                     />
                   </div>
+                  <div className="form-group">
+                    <input
+                      type="file"
+                      className="form-control form-control-user"
+                      id="petimage"
+                      name="petimage"
+                      onChange={handleChange}
+                    />
+                  </div>
                   <button
                     type="submit"
                     className="btn btn-primary btn-user btn-block"
@@ -147,6 +171,7 @@ export default function PetsList() {
                       >
                         <thead>
                           <tr>
+                            <th></th>
                             <th>Name</th>
                             <th>Actions</th>
                           </tr>
@@ -155,15 +180,43 @@ export default function PetsList() {
                           {pets.map((pet) => (
                             <tr key={pet.id}>
                               <td>
+                                {pet.petimage ? (
+                                  <img
+                                    src={baseUrl + "media/" + pet.petimage}
+                                    alt={pet.petname}
+                                    style={{
+                                      width: "50px",
+                                      height: "50px",
+                                      objectFit: "cover",
+                                    }}
+                                  />
+                                ) : (
+                                  "No Image"
+                                )}
+                              </td>
+
+                              <td>
                                 <input
                                   type="text"
-                                  className="form-control"
+                                  className="form-control mb-2"
                                   defaultValue={pet.petname}
                                   onBlur={(e) =>
-                                    handleUpdate(pet.id, e.target.value)
+                                    handleUpdate(pet.id, e.target.value, null)
+                                  }
+                                />
+                                <input
+                                  type="file"
+                                  className="form-control"
+                                  onChange={(e) =>
+                                    handleUpdate(
+                                      pet.id,
+                                      pet.petname,
+                                      e.target.files[0]
+                                    )
                                   }
                                 />
                               </td>
+
                               <td>
                                 <button
                                   className="btn btn-danger"

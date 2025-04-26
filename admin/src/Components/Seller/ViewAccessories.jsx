@@ -77,6 +77,7 @@ export default function ViewAccessories() {
                                         <tr>
                                             <th>Image</th>
                                             <th>Accessory Name</th>
+                                            <th>Category</th>
                                             <th>Brand</th>
                                             <th>Price</th>
                                             <th>Stock</th>
@@ -92,6 +93,7 @@ export default function ViewAccessories() {
                                                         <img src={`${baseUrl}${accessory.image.startsWith("/") ? accessory.image.slice(1) : accessory.image}`} width="100" height="100" />
                                                     </td>
                                                     <td>{accessory.accessory_name}</td>
+                                                    <td>{accessory.category}</td>
                                                     <td>{accessory.brand}</td>
                                                     <td>{accessory.price}</td>
                                                     <td>{accessory.stock}</td>

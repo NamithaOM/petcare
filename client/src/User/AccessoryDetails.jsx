@@ -63,6 +63,11 @@ const navigate = useNavigate();
             <div className="table-responsive">
               <table className="table borderless">
                 <tbody>
+                
+                <tr>
+                    <td className="text-start fw-bold">Category:</td>
+                    <td className="text-end">{accessory.category}</td>
+                  </tr>
                   <tr>
                     <td className="text-start fw-bold">Brand:</td>
                     <td className="text-end">{accessory.brand}</td>

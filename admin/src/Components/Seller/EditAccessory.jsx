@@ -18,6 +18,7 @@ export default function EditAccessory() {
     petid: "",
     userid: "",
     image: null,
+    category: "",
   });
 
   useEffect(() => {
@@ -39,11 +40,12 @@ export default function EditAccessory() {
           accessory_name: data.accessory_name,
           brand: data.brand,
           price: data.price,
+          category: data.category || "", // Default empty string if null
           stock: data.stock,
           description: data.description,
           petid: data.petid,
           userid: data.userid,
-          image: null,
+          image: data.image || null, // Ensure the image path is set correctly
         });
       }
     } catch (error) {
@@ -124,6 +126,8 @@ export default function EditAccessory() {
                   ))}
                 </select>
               </div>
+
+              {/* Two-column layout for Name, Category, Brand, and Price */}
               <div className="form-row">
                 <div className="form-group col-6">
                   <label>Accessory Name</label>
@@ -137,6 +141,20 @@ export default function EditAccessory() {
                   />
                 </div>
                 <div className="form-group col-6">
+                  <label>Category</label>
+                  <input
+                    type="text"
+                    name="category"
+                    className="form-control"
+                    value={formData.category}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group col-6">
                   <label>Brand</label>
                   <input
                     type="text"
@@ -147,65 +165,58 @@ export default function EditAccessory() {
                     required
                   />
                 </div>
-              </div>
-              <div className="form-row">
-                  <div className="form-group col-6">
-                    <label>Price</label>
-                    <input
-                      type="number"
-                      name="price"
-                      className="form-control"
-                      value={formData.price}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                  <div className="form-group col-6">
-                    <label>Stock</label>
-                    <input
-                      type="number"
-                      name="stock"
-                      className="form-control"
-                      value={formData.stock}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
+                <div className="form-group col-6">
+                  <label>Price</label>
+                  <input
+                    type="number"
+                    name="price"
+                    className="form-control"
+                    value={formData.price}
+                    onChange={handleChange}
+                    required
+                  />
                 </div>
-              <div className="form-group">
-                <label>Description</label>
-                <textarea
-                  name="description"
-                  className="form-control"
-                  value={formData.description}
-                  onChange={handleChange}
-                  required
-                />
               </div>
+
+              {/* Single Column for Stock */}
+              <div className="form-row">
+                <div className="form-group col-6">
+                  <label>Stock</label>
+                  <input
+                    type="number"
+                    name="stock"
+                    className="form-control"
+                    value={formData.stock}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                {/* Description Field (Single Column) */}
+                <div className="form-group col-6">
+                  <label>Description</label>
+                  <textarea
+                    name="description"
+                    className="form-control"
+                    value={formData.description}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Image Upload Field */}
               <div className="form-group">
                 <label>Update Image</label>
-                {formData.image &&
-                  (typeof formData.image === "string" ? (
-                    <img
-                      src={`${baseUrl}${
-                        formData.image.startsWith("/")
-                          ? formData.image.slice(1)
-                          : formData.image
-                      }`}
-                      width="100"
-                      height="100"
-                      alt="Current Accessory"
-                      style={{ objectFit: "cover", marginBottom: "10px" }}
-                    />
-                  ) : (
-                    <img
-                      src={URL.createObjectURL(formData.image)}
-                      width="100"
-                      height="100"
-                      alt="Selected Preview"
-                      style={{ objectFit: "cover", marginBottom: "10px" }}
-                    />
-                  ))}
+                {formData.image && (
+                  <img
+                  src={`${baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl}${formData.image}`}
+                  width="100"
+                    height="100"
+                    alt="Current Accessory"
+                    style={{ objectFit: "cover", marginBottom: "10px" }}
+                  />
+                )}
                 <input
                   type="file"
                   name="image"
@@ -214,6 +225,8 @@ export default function EditAccessory() {
                   accept="image/*"
                 />
               </div>
+
+              {/* Submit Button */}
               <button type="submit" className="btn btn-primary mt-3">
                 Update
               </button>

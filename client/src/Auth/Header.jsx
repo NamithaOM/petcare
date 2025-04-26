@@ -24,6 +24,9 @@ export default function Header() {
   const handleMessages = () => {
     navigate("/messages");
   };
+  const handleProfile = () => {
+    navigate("/profile");
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -219,7 +222,7 @@ export default function Header() {
                     </a>
                   </li>
                   <li className="nav-item">
-                    <a href="/price" className="nav-link">
+                    <a href="/service" className="nav-link">
                       Services
                     </a>
                   </li>
@@ -247,6 +250,15 @@ export default function Header() {
                     Account
                   </span>
                   <ul className="dropdown-menu">
+                  <li>
+                      <span
+                        className="dropdown-item"
+                        onClick={handleProfile}
+                        style={{ cursor: "pointer" }}
+                      >
+                       Profile
+                      </span>
+                    </li>
                     <li>
                       <span
                         className="dropdown-item"

@@ -1,116 +1,11 @@
 import React from "react";
-import Price from "./Price";
+
+import Header from "./Header";
 
 export default function Landing() {
   return (
     <>
-      <div className="wrap">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-6 d-flex align-items-center">
-              <p className="mb-0 phone pl-md-2">
-                <a href="#" className="mr-2">
-                  <span className="fa fa-phone mr-1"></span> +91 12345 67890
-                </a>
-                <a href="#">
-                  <span className="fa fa-paper-plane mr-1"></span>{" "}
-                  petcare@email.com
-                </a>
-              </p>
-            </div>
-            <div className="col-md-6 d-flex justify-content-md-end">
-              <div className="social-media">
-                <p className="mb-0 d-flex">
-                  <a
-                    href="#"
-                    className="d-flex align-items-center justify-content-center"
-                  >
-                    <span className="fa fa-facebook">
-                      <i className="sr-only">Facebook</i>
-                    </span>
-                  </a>
-                  <a
-                    href="#"
-                    className="d-flex align-items-center justify-content-center"
-                  >
-                    <span className="fa fa-twitter">
-                      <i className="sr-only">Twitter</i>
-                    </span>
-                  </a>
-                  <a
-                    href="#"
-                    className="d-flex align-items-center justify-content-center"
-                  >
-                    <span className="fa fa-instagram">
-                      <i className="sr-only">Instagram</i>
-                    </span>
-                  </a>
-                  <a
-                    href="#"
-                    className="d-flex align-items-center justify-content-center"
-                  >
-                    <span className="fa fa-dribbble">
-                      <i className="sr-only">Dribbble</i>
-                    </span>
-                  </a>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <nav
-        className="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light"
-        id="ftco-navbar"
-      >
-        <div className="container">
-          <a className="navbar-brand" href="index.html">
-            <span className="flaticon-pawprint-1 mr-2"></span>Pet Care
-          </a>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#ftco-nav"
-            aria-controls="ftco-nav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="fa fa-bars"></span> Menu
-          </button>
-          <div className="collapse navbar-collapse" id="ftco-nav">
-            <ul className="navbar-nav ml-auto">
-              <li className="nav-item active">
-                <a href="/" className="nav-link">
-                  Home
-                </a>
-              </li>
-              <li className="nav-item">
-                <a href="/about" className="nav-link">
-                  About
-                </a>
-              </li>
-             
-              <li className="nav-item">
-                <a href="/price" className="nav-link">
-                  Services
-                </a>
-              </li>
-              <li className="nav-item">
-                <a href="/contact" className="nav-link">
-                  Contact
-                </a>
-              </li>
-              <li className="nav-item">
-                <a href="/login" className="nav-link">
-                  Login
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+     <Header/>
       <div
         className="hero-wrap js-fullheight"
         style={{ backgroundImage: "url('/assets/images/bg_1.jpg')" }}
@@ -123,7 +18,7 @@ export default function Landing() {
             data-scrollax-parent="true"
           >
             <div className="col-md-11 ftco-animate text-center text-">
-              <h1 className="mb-4">
+              <h1 className="mb-4 text-success">
                 Highest Quality Care For Pets You'll Love
               </h1>
               <p>
@@ -210,75 +105,207 @@ export default function Landing() {
         </div>
       </section> */}
 
-      <section className="ftco-section ftco-no-pt ftco-no-pb">
-        <div className="container">
-          <div className="row d-flex no-gutters">
-            <div className="col-md-5 d-flex">
-              <div
-                className="img img-video d-flex align-self-stretch align-items-center justify-content-center justify-content-md-center mb-4 mb-sm-0"
-                style={{ backgroundImage: "url('assets/images/about-1.jpg')" }}
-              ></div>
+<section className="ftco-section ftco-no-pt ftco-no-pb">
+  <div className="container">
+    <div className="row d-flex no-gutters">
+      <div className="col-md-5 d-flex">
+        <div
+          className="img img-video d-flex align-self-stretch align-items-center justify-content-center justify-content-md-center mb-4 mb-sm-0"
+          style={{ backgroundImage: "url('assets/images/about-1.jpg')" }}
+        ></div>
+      </div>
+      <div className="col-md-7 pl-md-5 py-md-5">
+        <div className="heading-section pt-md-5">
+          <h2 className="mb-4">Why Choose Us?</h2>
+        </div>
+        <div className="row">
+          <div className="col-md-6 services-2 w-100 d-flex">
+            <div className="icon d-flex align-items-center justify-content-center">
+              <span className="flaticon-stethoscope"></span>
             </div>
-            <div className="col-md-7 pl-md-5 py-md-5">
-              <div className="heading-section pt-md-5">
-                <h2 className="mb-4">Why Choose Us?</h2>
+            <div className="text pl-3">
+              <h4>Care Advices</h4>
+              <p>
+                "Our team of experts offers trusted care advice to ensure your health and wellness are in the best hands."
+              </p>
+            </div>
+          </div>
+          <div className="col-md-6 services-2 w-100 d-flex">
+            <div className="icon d-flex align-items-center justify-content-center">
+              <span className="flaticon-customer-service"></span>
+            </div>
+            <div className="text pl-3">
+              <h4>Customer Support</h4>
+              <p>
+                "We offer 24/7 customer support to assist you with any queries or concerns. Your satisfaction is our priority."
+              </p>
+            </div>
+          </div>
+          <div className="col-md-6 services-2 w-100 d-flex">
+            <div className="icon d-flex align-items-center justify-content-center">
+              <span className="flaticon-emergency-call"></span>
+            </div>
+            <div className="text pl-3">
+              <h4>Emergency Services</h4>
+              <p>
+                "In case of emergencies, our rapid response team is always ready to provide immediate and effective care."
+              </p>
+            </div>
+          </div>
+          <div className="col-md-6 services-2 w-100 d-flex">
+            <div className="icon d-flex align-items-center justify-content-center">
+              <span className="flaticon-veterinarian"></span>
+            </div>
+            <div className="text pl-3">
+              <h4>Veterinary Help</h4>
+              <p>
+                "We provide expert veterinary help for your pets, ensuring they receive the best possible treatment."
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+   
+      <section className="ftco-section bg-light py-5">
+        <div className="container">
+          <div className="row justify-content-center pb-5 mb-3">
+            <div className="col-md-7 text-center">
+              <h2>Affordable Packages</h2>
+            </div>
+          </div>
+
+          <div className="row">
+            {/* Plan 1 */}
+            <div className="col-md-4 mb-4">
+              <div className="block-7 shadow rounded">
+                <div
+                  className="img rounded-top"
+                  style={{
+                    backgroundImage: "url('/assets/images/pricing-1.jpg')",
+                    height: "250px",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    width: "100%",
+                  }}
+                ></div>
+                <div className="text-center p-4">
+                  <span className="excerpt d-block">Personal</span>
+                  <span className="price">
+                    <sup></sup> <span className="number">Training</span>
+                  </span>
+
+                  <ul className="pricing-text list-unstyled my-4">
+                    <li>
+                      <i className="fa fa-check mr-2 text-success"></i>
+                      Training Sessions
+                    </li>
+                    <li>
+                      <i className="fa fa-check mr-2 text-success"></i>
+                      Veterinary Check-up
+                    </li>
+                    <li>
+                      <i className="fa fa-check mr-2 text-success"></i>
+                      Grooming Session
+                    </li>
+                    <li>
+                      <i className="fa fa-check mr-2 text-success"></i>Starter
+                      Accessory Kit
+                    </li>
+                  </ul>
+                </div>
               </div>
-              <div className="row">
-                <div className="col-md-6 services-2 w-100 d-flex">
-                  <div className="icon d-flex align-items-center justify-content-center">
-                    <span className="flaticon-stethoscope"></span>
-                  </div>
-                  <div className="text pl-3">
-                    <h4>Care Advices</h4>
-                    <p>
-                      Far far away, behind the word mountains, far from the
-                      countries.
-                    </p>
-                  </div>
+            </div>
+
+            {/* Plan 2 */}
+            <div className="col-md-4 mb-4">
+              <div className="block-7 shadow rounded">
+                <div
+                  className="img rounded-top"
+                  style={{
+                    backgroundImage: "url('/assets/images/pricing-2.jpg')",
+                    height: "250px",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    width: "100%",
+                  }}
+                ></div>
+                <div className="text-center p-4">
+                  <span className="excerpt d-block">Business</span>
+                  <span className="price">
+                    <sup></sup> <span className="number">Purchasing</span>
+                  </span>
+
+                  <ul className="pricing-text list-unstyled my-4">
+                    <li>
+                      <i className="fa fa-check mr-2 text-success"></i>Weekly
+                      Food Delivery
+                    </li>
+                    <li>
+                      <i className="fa fa-check mr-2 text-success"></i>
+                      Veterinary Visits
+                    </li>
+                    <li>
+                      <i className="fa fa-check mr-2 text-success"></i>
+                      Grooming Sessions
+                    </li>
+                    <li>
+                      <i className="fa fa-check mr-2 text-success"></i>Essential
+                      Medicines Included
+                    </li>
+                  </ul>
                 </div>
-                <div className="col-md-6 services-2 w-100 d-flex">
-                  <div className="icon d-flex align-items-center justify-content-center">
-                    <span className="flaticon-customer-service"></span>
-                  </div>
-                  <div className="text pl-3">
-                    <h4>Customer Supports</h4>
-                    <p>
-                      Far far away, behind the word mountains, far from the
-                      countries.
-                    </p>
-                  </div>
-                </div>
-                <div className="col-md-6 services-2 w-100 d-flex">
-                  <div className="icon d-flex align-items-center justify-content-center">
-                    <span className="flaticon-emergency-call"></span>
-                  </div>
-                  <div className="text pl-3">
-                    <h4>Emergency Services</h4>
-                    <p>
-                      Far far away, behind the word mountains, far from the
-                      countries.
-                    </p>
-                  </div>
-                </div>
-                <div className="col-md-6 services-2 w-100 d-flex">
-                  <div className="icon d-flex align-items-center justify-content-center">
-                    <span className="flaticon-veterinarian"></span>
-                  </div>
-                  <div className="text pl-3">
-                    <h4>Veterinary Help</h4>
-                    <p>
-                      Far far away, behind the word mountains, far from the
-                      countries.
-                    </p>
-                  </div>
+              </div>
+            </div>
+
+            {/* Plan 3 */}
+            <div className="col-md-4 mb-4">
+              <div className="block-7 shadow rounded">
+                <div
+                  className="img rounded-top"
+                  style={{
+                    backgroundImage: "url('/assets/images/pricing-3.jpg')",
+                    height: "250px",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    width: "100%",
+                  }}
+                ></div>
+                <div className="text-center p-4">
+                  <span className="excerpt d-block">Ultimate</span>
+                  <span className="price">
+                    <sup></sup> <span className="number">Consulting</span>
+                  </span>
+
+                  <ul className="pricing-text list-unstyled my-4">
+                    <li>
+                      <i className="fa fa-check mr-2 text-success"></i>Unlimited
+                      Vet Consultations
+                    </li>
+                    <li>
+                      <i className="fa fa-check mr-2 text-success"></i>
+                      Grooming Sessions
+                    </li>
+                    <li>
+                      <i className="fa fa-check mr-2 text-success"></i> Trainer
+                      Visits
+                    </li>
+                    <li>
+                      <i className="fa fa-check mr-2 text-success"></i>Full
+                      Accessory & Medicine Kit
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </section>
-
-      <Price/>
+      
       <section
         className="ftco-appointment ftco-section ftco-no-pt ftco-no-pb img"
         style={{ backgroundImage: "url('assets/images/bg_3.jpg')" }}
