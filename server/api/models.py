@@ -258,20 +258,23 @@ class Cart(models.Model):
         return f"{self.item} x {self.count}"
     
     
+# models.py
 class Order(models.Model):
-    userid = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    payment_id = models.CharField(max_length=100)
+    order_date = models.DateTimeField(null=True)
+    status = models.CharField(max_length=20)
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     item = GenericForeignKey('content_type', 'object_id')
     itemcategory = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField()
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)
-    seller_id = models.IntegerField()
-    item_type = models.CharField(max_length=50)
-    payment_id = models.CharField(max_length=100)
-    ordered_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=10, default="1")
+    sellerid = models.CharField(max_length=100)
+    
 
     def __str__(self):
         return f"{self.item} x {self.quantity}"

@@ -30,6 +30,8 @@ import Message from "./User/Message";
 import TrainerBookings from "./User/TrainerBookings";
 import GroomingBooking from "./User/GroomingBooking";
 import ViewCart from "./User/ViewCart";
+import FoodDetails from "./User/FoodDetails";
+import Order from "./User/Order";
 
 function App() {
   const [userType] = useState(localStorage.getItem("userType"));
@@ -63,6 +65,7 @@ function App() {
             <Route path="/trainer-profile/:id" element={<TrainerProfile />} />
             <Route path="/grooming-details/:id" element={<GroomingDetails />} />
             <Route path="/medicine-details/:id" element={<MedicineDetails />} />
+            <Route path="/food-details/:id" element={<FoodDetails />} />
             <Route path="/accessory-details/:id" element={<AccessoryDetails />} />
             <Route path="/drBooking" element={<DoctorBookings />} />
             <Route path="/trainerBooking" element={<TrainerBookings />} />
@@ -72,6 +75,8 @@ function App() {
             <Route path="/petprofile" element={<PetProfile />} />
             <Route path="/updatepet/:id" element={<UpdatePetDetails />} />
             <Route path="/cart" element={<ViewCart />} />
+            <Route path="/order" element={<Order />} />
+
 
 
             <Route path="*" element={<Dashboard />} />

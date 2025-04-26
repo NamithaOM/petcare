@@ -11,6 +11,9 @@ from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
 import datetime
 from django.shortcuts import get_object_or_404  # <-- Make sure this is imported
+from django.utils import timezone
+from django.contrib.contenttypes.models import ContentType
+
 
 @csrf_exempt
 def createUser(request):
@@ -838,9 +841,40 @@ def create_food(request):
 
 @csrf_exempt
 def allfood(request):
-    food = list(FoodItem.objects.values())
-    return JsonResponse({'Food': food}, safe=False)
+    foods = FoodItem.objects.select_related('pet', 'user').all()
 
+    food_list = []
+    for food in foods:
+        # Get related user data from UserData table
+        try:
+            user_data = UserData.objects.get(userid=food.user)
+            user_name = user_data.name
+            user_contact = user_data.contact
+        except UserData.DoesNotExist:
+            user_name = None
+            user_contact = None
+
+        food_list.append({
+            "id": food.id,
+            "itemname": food.itemname,
+            "quantity": food.quantity,
+            "price": float(food.price),
+            "stock": food.stock,
+            "count": food.count,
+            "dom": food.dom.strftime("%Y-%m-%d"),
+            "doe": food.doe.strftime("%Y-%m-%d"),
+            "suitablefor": food.suitablefor,
+            "foodpreference": food.foodpreference,
+            "flavour": food.flavour,
+            "image": food.image.url if food.image else None,
+            "pet_id": food.pet.id,
+            "pet_name": food.pet.petname,
+            "sellerId": food.user.id,
+            "user_name": user_name,
+            "user_contact": user_contact
+        })
+
+    return JsonResponse({'Food': food_list}, safe=False)
 
 @csrf_exempt
 def view_food_by_user(request, userid):
@@ -1190,29 +1224,39 @@ def create_accessory(request):
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
 # for user view
-
 @csrf_exempt
 def allaccessory(request):
     if request.method == "GET":
-        accessories = Accessory.objects.select_related('pet').all()
-        data = []
+        accessories = Accessory.objects.select_related('pet', 'user').all()
 
+        accessory_list = []
         for acc in accessories:
-            data.append({
+            try:
+                user_data = UserData.objects.get(userid=acc.user)
+                user_name = user_data.name
+                user_contact = user_data.contact
+            except UserData.DoesNotExist:
+                user_name = None
+                user_contact = None
+
+            accessory_list.append({
                 "id": acc.id,
                 "accessory_name": acc.accessory_name,
                 "brand": acc.brand,
                 "price": float(acc.price),
                 "stock": acc.stock,
                 "count": acc.count,
-                "pet_id": acc.pet.id,
-                "pet_name": acc.pet.petname,  # assuming the pet model has a `name` field
-                "user_id": acc.user.id,
-                "image": acc.image.url if acc.image else "",
                 "description": acc.description,
+                "image": acc.image.url if acc.image else None,
+                "pet_id": acc.pet.id,
+                "pet_name": acc.pet.petname,
+                "sellerId": acc.user.id,
+                "user_name": user_name,
+                "user_contact": user_contact
             })
 
-        return JsonResponse({"Accessory": data}, safe=False)
+        return JsonResponse({'Accessory': accessory_list}, safe=False)
+    
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
@@ -2154,6 +2198,7 @@ def get_grooming_bookings_by_service_center(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
     
+
 @csrf_exempt
 def add_to_cart(request):
     if request.method == "POST":
@@ -2168,8 +2213,19 @@ def add_to_cart(request):
             item_category = data.get("itemcategory")
 
             user = User.objects.get(id=user_id)
-            medicine_obj = Medicine.objects.get(id=item_id)
-            content_type = ContentType.objects.get_for_model(Medicine)
+
+            # Determine model based on item_category
+            if item_category == "food":
+                item_model = FoodItem
+            elif item_category == "medicine":
+                item_model = Medicine
+            elif item_category == "accessory":
+                item_model = Accessory
+            else:
+                return JsonResponse({"success": False, "message": "Invalid item category."}, status=400)
+
+            item_obj = item_model.objects.get(id=item_id)
+            content_type = ContentType.objects.get_for_model(item_model)
 
             existing = Cart.objects.filter(
                 content_type=content_type,
@@ -2202,88 +2258,67 @@ def add_to_cart(request):
 
 @csrf_exempt
 def view_cart(request):
-    if request.method == "GET":
+    if request.method == "POST":
         try:
-            user_id = request.GET.get("userId")
+            data = json.loads(request.body)
+            user_id = data.get("userId")
 
-            # Handle the case where the user does not exist
-            try:
-                user = User.objects.get(id=user_id)
-            except User.DoesNotExist:
-                return JsonResponse({"success": False, "message": "User not found."}, status=404)
+            user = User.objects.get(id=user_id)
+            cart_items = Cart.objects.filter(userid=user, status="0").order_by('-created_at')
+            cart_data = []
 
-            cart_items = Cart.objects.filter(userid=user, status="0")
-
-            cart_list = []
             for item in cart_items:
-                # Get the model (FoodItem, Medicine, Accessory) based on the content_type
-                content_type = item.content_type
-                model_class = content_type.model_class()
-
-                # Fetch the actual object based on content_type and object_id
-                model_obj = model_class.objects.get(id=item.object_id)
-
-                # Construct cart item based on the model
-                cart_item = {
+                item_details = {
                     "cartId": item.id,
-                    "medicineId": item.object_id,
+                    "itemId": item.object_id,  # Include the actual item ID
+                    "itemcategory": item.itemcategory,
+                    "sellerId": item.sellerid,
                     "price": float(item.price),
                     "quantity": item.count,
-                    "total_price": float(item.price) * item.count,
-                    "sellerId": item.sellerid,
+                    "created_at": item.created_at,
+                    "updated_at": item.updated_at,
                 }
 
-                # Depending on the model, we add the appropriate fields
-                if isinstance(model_obj, FoodItem):
-                    cart_item["itemname"] = model_obj.itemname
-                elif isinstance(model_obj, Medicine):
-                    cart_item["itemname"] = model_obj.medicine_name
-                elif isinstance(model_obj, Accessory):
-                    cart_item["itemname"] = model_obj.accessory_name
+                # Fetch seller name and contact
+                try:
+                    seller_user = User.objects.get(id=item.sellerid)
+                    seller_data = UserData.objects.get(userid=seller_user)
+                    item_details["seller_name"] = seller_data.name
+                    item_details["seller_contact"] = seller_data.contact
+                except (User.DoesNotExist, UserData.DoesNotExist):
+                    item_details["seller_name"] = "Unknown"
+                    item_details["seller_contact"] = "N/A"
 
-                # Add the cart item to the list
-                cart_list.append(cart_item)
+                # Get the actual item details based on category
+                if item.itemcategory == "food":
+                    food_item = FoodItem.objects.get(id=item.object_id)
+                    item_details.update({
+                        "itemname": food_item.itemname,
+                        "image": food_item.image.url if food_item.image else None,
+                    })
 
-            return JsonResponse({"success": True, "cartItems": cart_list}, safe=False)
+                elif item.itemcategory == "medicine":
+                    medicine_item = Medicine.objects.get(id=item.object_id)
+                    item_details.update({
+                        "itemname": medicine_item.medicine_name,
+                        "image": medicine_item.image.url if medicine_item.image else None,
+                    })
+
+                elif item.itemcategory == "accessory":
+                    accessory_item = Accessory.objects.get(id=item.object_id)
+                    item_details.update({
+                        "itemname": accessory_item.accessory_name,
+                        "image": accessory_item.image.url if accessory_item.image else None,
+                    })
+
+                cart_data.append(item_details)
+
+            return JsonResponse({"success": True, "cartItems": cart_data}, status=200)
 
         except Exception as e:
             return JsonResponse({"success": False, "message": str(e)}, status=400)
 
-    return JsonResponse({"success": False, "message": "Invalid request method"}, status=405)
-
-
-@csrf_exempt
-def create_order(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            user_id = data["userId"]
-            items = data["items"]
-
-            # Loop through the items and create the order entries
-            for item in items:
-                content_type = ContentType.objects.get(id=item["content_type"])
-                order = Order.objects.create(
-                    userid=user_id,
-                    content_type=content_type,
-                    object_id=item["object_id"],
-                    itemcategory=item["itemcategory"],
-                    price=item["price"],
-                    quantity=item["quantity"],
-                    total_price=item["total_price"],
-                    seller_id=item["seller_id"],
-                    item_type=item["item_type"],
-                    payment_id=item["payment_id"],
-                    status="1",  # Mark as ordered
-                )
-
-            return JsonResponse({"success": True, "message": "Order placed successfully!"})
-
-        except Exception as e:
-            return JsonResponse({"success": False, "message": str(e)})
-
-    return JsonResponse({"success": False, "message": "Invalid request method"}, status=400)
-
+    return JsonResponse({"success": False, "message": "Invalid request method."}, status=405)
 
 
 # views.py
@@ -2300,3 +2335,219 @@ def delete_cart_item(request):
         except Exception as e:
             return JsonResponse({"success": False, "message": str(e)}, status=400)
     return JsonResponse({"success": False, "message": "Invalid request method."}, status=405)
+
+
+@csrf_exempt
+def create_order(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            user_id = data.get("userId")
+            items = data.get("items", [])
+
+            user = User.objects.get(id=user_id)
+
+            # Create a new Order instance
+            order = Order.objects.create(
+                user=user,
+                payment_id=data.get("paymentId", ""),  # You can modify this based on structure
+                order_date=timezone.now(),
+                status="Pending"
+            )
+
+            # Save individual items to OrderItem
+            for item in items:
+                item_category = item.get("itemcategory")
+                price = item.get("price")
+                quantity = item.get("quantity")
+                seller_id = item.get("seller_id")
+                item_id = item.get("object_id")  
+
+
+                # Get the content_type based on category
+                if item_category == "food":
+                    model = FoodItem
+                elif item_category == "medicine":
+                    model = Medicine
+                elif item_category == "accessory":
+                    model = Accessory
+                else:
+                    continue  # Invalid item category
+
+                content_type = ContentType.objects.get_for_model(model)
+
+                # Save order item
+                OrderItem.objects.create(
+                    order=order,
+                    content_type=content_type,
+                    object_id=item_id,
+                    itemcategory=item_category,
+                    price=price,
+                    quantity=quantity,
+                    sellerid=seller_id
+                )
+
+                # Update the corresponding Cart item status to "1" (purchased)
+                Cart.objects.filter(
+                    userid=user,
+                    content_type=content_type,
+                    object_id=item_id,
+                    status="0"
+                ).update(status="1")
+
+            return JsonResponse({"success": True, "message": "Order placed successfully."}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"success": False, "message": str(e)}, status=400)
+
+    return JsonResponse({"success": False, "message": "Invalid request method."}, status=405)
+
+@csrf_exempt
+def view_order(request):
+    if request.method == "GET":
+        try:
+            user_id = request.GET.get("userId")
+            if not user_id:
+                return JsonResponse({"success": False, "message": "User ID is required."}, status=400)
+
+            user = get_object_or_404(User, id=user_id)
+
+            # Fetch orders for the user
+            orders = Order.objects.filter(user=user).order_by('-order_date')
+            if not orders:
+                return JsonResponse({"success": False, "message": "No orders found for this user."}, status=404)
+
+            order_list = []
+
+            for order in orders:
+                order_items = OrderItem.objects.filter(order=order)
+                item_list = []
+
+                for item in order_items:
+                    # Determine the item model based on the content type
+                    if item.itemcategory == "food":
+                        model = FoodItem
+                    elif item.itemcategory == "medicine":
+                        model = Medicine
+                    elif item.itemcategory == "accessory":
+                        model = Accessory
+                    else:
+                        continue  # Skip invalid item categories
+
+                    # Get the item details using the content_type and object_id
+                    item_details = model.objects.filter(id=item.object_id).first()
+                    if not item_details:
+                        continue  # Skip if item details are not found
+
+                    item_info = {
+                        "item_name": getattr(item_details, 'itemname', None) or getattr(item_details, 'medicine_name', None) or getattr(item_details, 'accessory_name', None),
+                        "quantity": item.quantity,
+                        "price": item.price,
+                        "total_price": item.price * item.quantity,
+                        "category": item.itemcategory,
+                        "status": order.status,
+                        "image_url": item_details.image.url if item_details.image else '/path/to/default-image.jpg',
+                    }
+
+                    item_list.append(item_info)
+
+                order_info = {
+                    "order_id": order.id,
+                    "payment_id": order.payment_id,
+                    "order_date": order.order_date,
+                    "status": order.status,
+                    "items": item_list,
+                }
+
+                order_list.append(order_info)
+
+            return JsonResponse({"success": True, "orders": order_list}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"success": False, "message": str(e)}, status=400)
+
+    return JsonResponse({"success": False, "message": "Invalid request method."}, status=405)
+
+
+@csrf_exempt
+def view_seller_order(request):
+    if request.method == "GET":
+        try:
+            seller_id = request.GET.get("sellerId")
+            if not seller_id:
+                return JsonResponse({"success": False, "message": "Seller ID is required."}, status=400)
+
+            # Fetch all order items related to the given seller_id
+            order_items = OrderItem.objects.filter(sellerid=seller_id)
+            if not order_items:
+                return JsonResponse({"success": False, "message": "No orders found for this seller."}, status=404)
+
+            order_list = []
+
+            # Iterate through the order items and fetch relevant data
+            for item in order_items:
+                order = item.order
+                user = order.user
+
+                # Fetch customer data
+                try:
+                    customer = CustomerData.objects.get(userid=user)
+                except CustomerData.DoesNotExist:
+                    customer = None  # If no customer data exists, set to None
+
+                # Determine the item model based on the content type
+                if item.itemcategory == "food":
+                    model = FoodItem
+                elif item.itemcategory == "medicine":
+                    model = Medicine
+                elif item.itemcategory == "accessory":
+                    model = Accessory
+                else:
+                    continue  # Skip invalid item categories
+
+                # Get the item details using the content_type and object_id
+                content_type = ContentType.objects.get_for_model(model)
+                item_details = model.objects.filter(id=item.object_id).first()
+
+                if not item_details:
+                    continue  # Skip if item details are not found
+
+                # Prepare item information
+                item_info = {
+                    "item_name": getattr(item_details, 'itemname', None) or getattr(item_details, 'medicine_name', None) or getattr(item_details, 'accessory_name', None),
+                    "quantity": item.quantity,
+                    "price": item.price,
+                    "total_price": item.price * item.quantity,
+                    "category": item.itemcategory,
+                    "status": order.status,
+                    "image_url": item_details.image.url if item_details.image else '/path/to/default-image.jpg',
+                }
+
+                # If the order already exists in order_list, append the item to the existing order
+                existing_order = next((o for o in order_list if o["order_id"] == order.id), None)
+                if existing_order:
+                    existing_order["items"].append(item_info)
+                else:
+                    # Create a new entry for the order if not already in the list
+                    order_info = {
+                        "order_id": order.id,
+                        "payment_id": order.payment_id,
+                        "order_date": order.order_date,
+                        "status": order.status,
+                        "items": [item_info],  # Add the current item as the first item in the list
+                        "customer_details": {
+                            "name": customer.name if customer else "Unknown",
+                            "contact": customer.contact if customer else "Unknown",
+                            "address": customer.address if customer else "Unknown",
+                            "usertype": customer.usertype if customer else "Unknown"
+                        }
+                    }
+                    order_list.append(order_info)
+
+            return JsonResponse({"success": True, "orders": order_list}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"success": False, "message": str(e)}, status=400)
+
+    return JsonResponse({"success": False, "message": "Invalid request method."}, status=405)
+

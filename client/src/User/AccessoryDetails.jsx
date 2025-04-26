@@ -1,15 +1,50 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../Auth/Header";
 import Footer from "../Auth/Footer";
 import { baseUrl } from "../util/BaseUrl";
 
 export default function AccessoryDetails() {
   const location = useLocation();
+const navigate = useNavigate();
   const accessory = location.state?.accessories;
   if (!accessory) {
     return <div>No accessory data found.</div>;
   }
+
+    const handleAddToCart = () => {
+      const item = {
+          itemid: accessory.id,
+          items: accessory.accessory_name,
+          price: accessory.price,
+          quantity: 1,
+          sellerId: accessory.sellerId,
+          itemcategory: "accessory",
+          userId: localStorage.getItem("userId"),
+      };
+    
+      fetch(`${baseUrl}add-to-cart/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(item),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            alert("Added to cart successfully!");
+            navigate("/cart");
+          } else {
+            alert("Failed to add to cart: " + data.message);
+          }
+        })
+        .catch((err) => {
+          console.error("Error:", err);
+          alert("An error occurred while adding to cart.");
+        });
+    };
+    
 
   return (
     <>
@@ -48,22 +83,29 @@ export default function AccessoryDetails() {
                     <td className="text-start fw-bold">Description:</td>
                     <td className="text-end">{accessory.description}</td>
                   </tr>
+                  <tr>
+                    <td className="text-start fw-bold">Seller:</td>
+                    <td className="text-end">{accessory.user_name}</td>
+                  </tr>
+                  <tr>
+                    <td className="text-start fw-bold">Seller contact:</td>
+                    <td className="text-end">{accessory.user_contact}</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
           </div>
 
           <div className="text-center p-4">
-            <button className="btn btn-warning d-block px-4 py-2">
+          <button
+              className="btn btn-warning d-block px-4 py-2"
+              onClick={handleAddToCart}  // Call the handle function on button click
+            >
               Add to cart
             </button>
           </div>
 
-          <div className="text-center p-4">
-            <button className="btn btn-info d-block px-4 py-2">
-              Buy Now
-            </button>
-          </div>
+       
         </div>
       </div>
       <Footer />

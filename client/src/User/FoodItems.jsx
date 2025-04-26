@@ -36,7 +36,7 @@ export default function FoodItems() {
                   <div
                     className="img rounded-top"
                     style={{
-                      backgroundImage: `url(${baseUrl}media/${doc.image})`,
+                      backgroundImage: `url(${baseUrl.replace(/\/$/, '')}${doc.image})`,
                       height: "250px",
                       backgroundSize: "contain",
                       backgroundPosition: "center",

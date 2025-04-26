@@ -136,7 +136,7 @@ export default function Dashboard() {
               <div
                 className="img rounded-top"
                 style={{
-                  backgroundImage: "url('/assets/images/pricing-1.jpg')",
+                  backgroundImage: "url('/assets/images/cat1.jpg')",
                   height: '250px',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
@@ -160,7 +160,7 @@ export default function Dashboard() {
               <div
                 className="img rounded-top"
                 style={{
-                  backgroundImage: "url('/assets/images/pricing-1.jpg')",
+                  backgroundImage: "url('/assets/images/petFood2.png')",
                   height: '250px',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
@@ -184,7 +184,7 @@ export default function Dashboard() {
               <div
                 className="img rounded-top"
                 style={{
-                  backgroundImage: "url('/assets/images/pricing-1.jpg')",
+                  backgroundImage: "url('/assets/images/Acess2.jpg')",
                   height: '250px',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',

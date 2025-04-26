@@ -4,25 +4,24 @@ import Header from "../Auth/Header";
 import Footer from "../Auth/Footer";
 import { baseUrl } from "../util/BaseUrl";
 
-export default function MedicineDetails() {
+export default function FoodDetails() {
   const location = useLocation();
-  const medicine = location.state?.medicine;
+  const food = location.state?.food;
   const [cart, setCart] = useState([]);
   const navigate = useNavigate();
 
-  // Handle adding the item to the cart
   const handleAddToCart = () => {
     const item = {
-      itemid: medicine.id,
-      items: medicine.medicine_name,
-      price: medicine.price,
-      quantity: 1,
-      sellerId: medicine.selerId,
-      itemcategory: "medicine",
-      userId: localStorage.getItem("userId"),
+        itemid: food.id,
+        items: food.food_name,
+        price: food.price,
+        quantity: 1,
+        sellerId: food.sellerId,
+        itemcategory: "food",
+        userId: localStorage.getItem("userId"),
     };
   
-    fetch(baseUrl + "add-to-cart/", {
+    fetch(`${baseUrl}add-to-cart/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -45,10 +44,9 @@ export default function MedicineDetails() {
   };
   
   
-  
 
-  if (!medicine) {
-    return <div>No medicine data found.</div>;
+  if (!food) {
+    return <div>No food data found.</div>;
   }
 
   return (
@@ -56,57 +54,62 @@ export default function MedicineDetails() {
       <Header />
       <div className="container py-5">
         <div className="row">
-          <div className="col-md-4">
+          <div className="col-md-4 mt-5">
             <img
-              src={`${baseUrl.replace(/\/$/, "")}${medicine.image}`}
-              alt={medicine.medicine_name}
+              src={`${baseUrl.replace(/\/$/, "")}${food.image}`}
+              alt={food.food_name}
+              width= "100%"
               className="img-fluid rounded"
             />
           </div>
           <div className="col-md-8">
-            <h2 className="text-center mb-4">{medicine.medicine_name}</h2>
+            <h2 className="text-center mb-4">{food.itemname}</h2>
             <div className="table-responsive">
               <table className="table borderless">
                 <tbody>
                   <tr>
-                    <td className="text-start fw-bold">Brand:</td>
-                    <td className="text-end">{medicine.brand}</td>
+                    <td className="text-start fw-bold">Quantity:</td>
+                    <td className="text-end">{food.quantity} KG / L </td>
                   </tr>
                   <tr>
                     <td className="text-start fw-bold">Price:</td>
-                    <td className="text-end">₹{medicine.price}</td>
+                    <td className="text-end">₹{food.price}</td>
                   </tr>
                   <tr>
                     <td className="text-start fw-bold">Manufacture Date:</td>
-                    <td className="text-end">{medicine.manufacture_date}</td>
+                    <td className="text-end">{food.dom}</td>
                   </tr>
                   <tr>
                     <td className="text-start fw-bold">Expiry Date:</td>
-                    <td className="text-end">{medicine.expiry_date}</td>
+                    <td className="text-end">{food.doe}</td>
                   </tr>
                   <tr>
-                    <td className="text-start fw-bold">Dosage:</td>
-                    <td className="text-end">{medicine.dosage}</td>
+                    <td className="text-start fw-bold">Suitable for:</td>
+                    <td className="text-end">{food.suitablefor}</td>
                   </tr>
                   <tr>
-                    <td className="text-start fw-bold">Usage Instructions:</td>
-                    <td className="text-end">{medicine.usage_instructions}</td>
+                    <td className="text-start fw-bold">Food preference:</td>
+                    <td className="text-end">{food.foodpreference}</td>
+                  </tr>
+                  <tr>
+                    <td className="text-start fw-bold">Flavour:</td>
+                    <td className="text-end">{food.flavour}</td>
                   </tr>
                   <tr>
                     <td className="text-start fw-bold">Stock:</td>
-                    <td className="text-end">{medicine.count}</td>
+                    <td className="text-end">{food.count}</td>
                   </tr>
                   <tr>
                     <td className="text-start fw-bold">Recommended for:</td>
-                    <td className="text-end">{medicine.pet_name}</td>
+                    <td className="text-end">{food.pet_name}</td>
                   </tr>
                   <tr>
                     <td className="text-start fw-bold">Seller:</td>
-                    <td className="text-end">{medicine.user_name}</td>
+                    <td className="text-end">{food.user_name}</td>
                   </tr>
                   <tr>
                     <td className="text-start fw-bold">Seller Contact:</td>
-                    <td className="text-end">{medicine.user_contact}</td>
+                    <td className="text-end">{food.user_contact}</td>
                   </tr>
                 </tbody>
               </table>

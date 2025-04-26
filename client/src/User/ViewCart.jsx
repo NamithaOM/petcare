@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { baseUrl } from "../util/BaseUrl";
+import Header from "../Auth/Header";
+import Footer from "../Auth/Footer";
 
 export default function ViewCart() {
   const [cartItems, setCartItems] = useState([]);
@@ -14,7 +16,13 @@ export default function ViewCart() {
       return;
     }
 
-    fetch(`${baseUrl}view-cart/?userId=${userId}`)
+    fetch(`${baseUrl}view-cart/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId }),
+    })
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
@@ -95,8 +103,8 @@ export default function ViewCart() {
         alert("Payment Successful! Payment ID: " + paymentId);
 
         const orderItems = cartItems.map((item) => ({
-          content_type: item.content_type,
-          object_id: item.cartId,
+          content_type: item.content_type,  // Make sure this is present and valid
+          object_id: item.itemId,           // This is what was missing!
           itemcategory: item.itemcategory,
           price: item.price,
           quantity: item.quantity,
@@ -105,7 +113,7 @@ export default function ViewCart() {
           item_type: item.itemType,
           payment_id: paymentId,
         }));
-
+        
         fetch(baseUrl + "create-order/", {
           method: "POST",
           headers: {
@@ -114,6 +122,7 @@ export default function ViewCart() {
           body: JSON.stringify({
             userId: storedUserId,
             items: orderItems,
+            paymentId: paymentId, 
           }),
         })
           .then((res) => res.json())
@@ -130,9 +139,9 @@ export default function ViewCart() {
           });
       },
       prefill: {
-        name: "Your Name",
-        email: "youremail@example.com",
-        contact: "1234567890",
+        name: "Pet care",
+        email: "petcare@gmail.com",
+        contact: "+91 1234567890",
       },
       theme: {
         color: "#3399cc",
@@ -147,6 +156,8 @@ export default function ViewCart() {
   if (error) return <div className="text-danger">{error}</div>;
 
   return (
+    <>
+    <Header/>
     <div className="container py-5">
       <h2>Your Cart</h2>
       {cartItems.length === 0 ? (
@@ -156,6 +167,7 @@ export default function ViewCart() {
           <table className="table table-bordered mt-4">
             <thead>
               <tr>
+                <th></th>
                 <th>Item Name</th>
                 <th>Price (₹)</th>
                 <th>Quantity</th>
@@ -167,6 +179,21 @@ export default function ViewCart() {
             <tbody>
               {cartItems.map((item) => (
                 <tr key={item.cartId}>
+                  <td>
+                    <img
+                      src={`${baseUrl.replace(/\/$/, "")}/${item.image.replace(
+                        /^\//,
+                        ""
+                      )}`}
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                        objectFit: "cover",
+                      }}
+                      alt={item.itemname}
+                      className="img-fluid rounded"
+                    />
+                  </td>
                   <td>{item.itemname}</td>
                   <td>{item.price}</td>
                   <td>
@@ -185,7 +212,7 @@ export default function ViewCart() {
                     </button>
                   </td>
                   <td>{item.price * item.quantity}</td>
-                  <td>{item.sellerId}</td>
+                  <td>{item.seller_name}</td>
                   <td>
                     <button
                       className="btn btn-sm btn-danger"
@@ -205,5 +232,7 @@ export default function ViewCart() {
         </>
       )}
     </div>
+    <Footer/>
+    </>
   );
 }

@@ -35,6 +35,7 @@ import AllUsers from "./Components/Admin/AllUsers";
 import Feedbacks from "./Components/Admin/Feedbacks";
 import Bookings from "./Components/Service/Bookings";
 import PetDetails from "./Components/Service/PetDetails";
+import OrderList from "./Components/Seller/OrderList";
 
 function App() {
   const { user } = useAuth();
@@ -270,6 +271,15 @@ function App() {
             />
           }
         />
+         <Route
+          path="/seller/orders"
+          element={
+            <PrivateRoute
+              element={<OrderList />}
+              allowedTypes={["seller"]}
+            />
+          }
+        />
         <Route
           path="/seller/addAccessory"
           element={
@@ -277,6 +287,7 @@ function App() {
               element={<AddAccessory />}
               allowedTypes={["seller"]}
             />
+            
           }
         />
         {/*  */}

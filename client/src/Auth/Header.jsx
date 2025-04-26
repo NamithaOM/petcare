@@ -170,8 +170,13 @@ export default function Header() {
                       Cart
                     </a>
                   </li>
+                  <li className="nav-item">
+                    <a href="/order" className="nav-link">
+                   Order
+                    </a>
+                  </li>
 
-                  <li className="nav-item dropdown">
+                  {/* <li className="nav-item dropdown">
                     <a
                       href="#"
                       className="nav-link dropdown-toggle"
@@ -197,7 +202,7 @@ export default function Header() {
                         Accessories
                       </a>
                     </div>
-                  </li>
+                  </li> */}
                 </>
               )}
 
