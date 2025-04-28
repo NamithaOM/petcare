@@ -156,10 +156,7 @@ export default function Order() {
     return new Date(parsedDate).toLocaleString(); // Return formatted date
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
+ 
   return (
     <>
      <Header/>

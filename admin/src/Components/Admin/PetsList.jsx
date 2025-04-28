@@ -69,17 +69,20 @@ export default function PetsList() {
     if (newImage) {
       formPayload.append("petimage", newImage);
     }
-
+  
     try {
       const response = await fetch(baseUrl + `update_pet/${petId}/`, {
         method: "POST", // use POST or PUT, depending on your Django view
         body: formPayload,
       });
-
+  
       const data = await response.json();
       if (response.ok) {
         setMessage(data.message);
         fetchPets(); // Refresh the list
+  
+        // Reset the form data after submission (clear file input too)
+        setFormData({ petname: newName, petimage: null });
       } else {
         setMessage(data.error || "Something went wrong");
       }
@@ -87,6 +90,8 @@ export default function PetsList() {
       setMessage("Error updating pet");
     }
   };
+  
+  
 
   // Delete pet
   const handleDelete = async (petId) => {
@@ -196,26 +201,27 @@ export default function PetsList() {
                               </td>
 
                               <td>
-                                <input
-                                  type="text"
-                                  className="form-control mb-2"
-                                  defaultValue={pet.petname}
-                                  onBlur={(e) =>
-                                    handleUpdate(pet.id, e.target.value, null)
-                                  }
-                                />
-                                <input
-                                  type="file"
-                                  className="form-control"
-                                  onChange={(e) =>
-                                    handleUpdate(
-                                      pet.id,
-                                      pet.petname,
-                                      e.target.files[0]
-                                    )
-                                  }
-                                />
-                              </td>
+  <input
+    type="text"
+    className="form-control mb-2"
+    defaultValue={pet.petname}
+    onBlur={(e) =>
+      handleUpdate(pet.id, e.target.value, null)
+    }
+  />
+  <input
+    type="file"
+    className="form-control"
+    onChange={(e) =>
+      handleUpdate(
+        pet.id,
+        pet.petname,
+        e.target.files[0]
+      )
+    }
+  />
+</td>
+
 
                               <td>
                                 <button

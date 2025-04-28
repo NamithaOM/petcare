@@ -7,7 +7,7 @@ export default function Footer() {
 			<div className="container">
 				<div className="row">
 					<div className="col-md-6 col-lg-3 mb-4 mb-md-0">
-						<h2 className="footer-heading">Petsitting</h2>
+						<h2 className="footer-heading">Pet care</h2>
 						<p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
 						<ul className="ftco-footer-social p-0">
               <li className="ftco-animate"><a href="#" data-toggle="tooltip" data-placement="top" title="Twitter"><span className="fa fa-twitter"></span></a></li>
@@ -25,7 +25,7 @@ export default function Footer() {
               <div className="text">
                 <h3 className="heading"><a href="#">Even the all-powerful Pointing has no control about</a></h3>
                 <div className="meta">
-                  <div><a href="#"><span className="icon-calendar"></span> April 7, 2020</a></div>
+                  <div><a href="#"><span className="icon-calendar"></span> April 7, 2025</a></div>
                   <div><a href="#"><span className="icon-person"></span> Admin</a></div>
                   <div><a href="#"><span className="icon-chat"></span> 19</a></div>
                 </div>
@@ -39,7 +39,7 @@ export default function Footer() {
               <div className="text">
                 <h3 className="heading"><a href="#">Even the all-powerful Pointing has no control about</a></h3>
                 <div className="meta">
-                  <div><a href="#"><span className="icon-calendar"></span> April 7, 2020</a></div>
+                  <div><a href="#"><span className="icon-calendar"></span> April 7, 2025</a></div>
                   <div><a href="#"><span className="icon-person"></span> Admin</a></div>
                   <div><a href="#"><span className="icon-chat"></span> 19</a></div>
                 </div>
@@ -61,9 +61,9 @@ export default function Footer() {
 						<h2 className="footer-heading">Have a Questions?</h2>
 						<div className="block-23 mb-3">
               <ul>
-                <li><span className="icon fa fa-map"></span><span className="text">203 Fake St. Mountain View, San Francisco, California, USA</span></li>
-                <li><a href="#"><span className="icon fa fa-phone"></span><span className="text">+2 392 3929 210</span></a></li>
-                <li><a href="#"><span className="icon fa fa-paper-plane"></span><span className="text">info@yourdomain.com</span></a></li>
+                <li><span className="icon fa fa-map"></span><span className="text">Opp. Techno park, Kazhakoottam, Trivandrum, Kerala</span></li>
+                <li><a href="#"><span className="icon fa fa-phone"></span><span className="text">+91 9912526385</span></a></li>
+                <li><a href="#"><span className="icon fa fa-paper-plane"></span><span className="text">petcare@gmail.com</span></a></li>
               </ul>
             </div>
 					</div>

@@ -36,6 +36,7 @@ import Feedbacks from "./Components/Admin/Feedbacks";
 import Bookings from "./Components/Service/Bookings";
 import PetDetails from "./Components/Service/PetDetails";
 import OrderList from "./Components/Seller/OrderList";
+import CustomerOrders from "./Components/Admin/CustomerOrders";
 
 function App() {
   const { user } = useAuth();
@@ -76,6 +77,12 @@ function App() {
           path="/admin/staffs"
           element={
             <PrivateRoute element={<AllUsers />} allowedTypes={["admin"]} />
+          }
+        />
+         <Route
+          path="/admin/orders"
+          element={
+            <PrivateRoute element={<CustomerOrders />} allowedTypes={["admin"]} />
           }
         />
         <Route

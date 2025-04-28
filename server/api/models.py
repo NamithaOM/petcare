@@ -268,7 +268,7 @@ class Cart(models.Model):
         return f"{self.item} x {self.count}"
     
     
-# models.py
+# user order
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     payment_id = models.CharField(max_length=100)
@@ -284,7 +284,19 @@ class OrderItem(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField()
     sellerid = models.CharField(max_length=100)
+    deliverystatus = models.CharField(max_length=100, default='Ordered')
     
 
     def __str__(self):
         return f"{self.item} x {self.quantity}"
+    
+
+    
+# refund
+class customerRefund(models.Model):
+    userId = models.ForeignKey(User, on_delete=models.CASCADE)
+    amount = models.CharField(default='0')
+    orderId = models.ForeignKey(Order, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.amount

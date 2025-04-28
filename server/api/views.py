@@ -13,7 +13,7 @@ import datetime
 from django.shortcuts import get_object_or_404  # <-- Make sure this is imported
 from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
-
+from django.db import transaction
 
 @csrf_exempt
 def createUser(request):
@@ -2412,19 +2412,18 @@ def create_order(request):
             # Create a new Order instance
             order = Order.objects.create(
                 user=user,
-                payment_id=data.get("paymentId", ""),  # You can modify this based on structure
+                payment_id=data.get("paymentId", ""),
                 order_date=timezone.now(),
                 status="Pending"
             )
 
-            # Save individual items to OrderItem
+            # Save individual items to OrderItem and update stock count
             for item in items:
                 item_category = item.get("itemcategory")
                 price = item.get("price")
                 quantity = item.get("quantity")
                 seller_id = item.get("seller_id")
-                item_id = item.get("object_id")  
-
+                item_id = item.get("object_id")
 
                 # Get the content_type based on category
                 if item_category == "food":
@@ -2439,7 +2438,7 @@ def create_order(request):
                 content_type = ContentType.objects.get_for_model(model)
 
                 # Save order item
-                OrderItem.objects.create(
+                order_item = OrderItem.objects.create(
                     order=order,
                     content_type=content_type,
                     object_id=item_id,
@@ -2457,12 +2456,93 @@ def create_order(request):
                     status="0"
                 ).update(status="1")
 
+                # Decrease the stock count in the relevant model
+                if item_category == "food":
+                    food_item = FoodItem.objects.get(id=item_id)
+                    food_item.count -= quantity
+                    food_item.save()
+                elif item_category == "medicine":
+                    medicine_item = Medicine.objects.get(id=item_id)
+                    medicine_item.count -= quantity
+                    medicine_item.save()
+                elif item_category == "accessory":
+                    accessory_item = Accessory.objects.get(id=item_id)
+                    accessory_item.count -= quantity
+                    accessory_item.save()
+
             return JsonResponse({"success": True, "message": "Order placed successfully."}, status=200)
 
         except Exception as e:
             return JsonResponse({"success": False, "message": str(e)}, status=400)
 
     return JsonResponse({"success": False, "message": "Invalid request method."}, status=405)
+
+
+# @csrf_exempt
+# def create_order(request):
+#     if request.method == "POST":
+#         try:
+#             data = json.loads(request.body)
+#             user_id = data.get("userId")
+#             items = data.get("items", [])
+
+#             user = User.objects.get(id=user_id)
+
+#             # Create a new Order instance
+#             order = Order.objects.create(
+#                 user=user,
+#                 payment_id=data.get("paymentId", ""),  # You can modify this based on structure
+#                 order_date=timezone.now(),
+#                 status="Pending"
+#             )
+
+#             # Save individual items to OrderItem
+#             for item in items:
+#                 item_category = item.get("itemcategory")
+#                 price = item.get("price")
+#                 quantity = item.get("quantity")
+#                 seller_id = item.get("seller_id")
+#                 item_id = item.get("object_id")  
+
+
+#                 # Get the content_type based on category
+#                 if item_category == "food":
+#                     model = FoodItem
+#                 elif item_category == "medicine":
+#                     model = Medicine
+#                 elif item_category == "accessory":
+#                     model = Accessory
+#                 else:
+#                     continue  # Invalid item category
+
+#                 content_type = ContentType.objects.get_for_model(model)
+
+#                 # Save order item
+#                 OrderItem.objects.create(
+#                     order=order,
+#                     content_type=content_type,
+#                     object_id=item_id,
+#                     itemcategory=item_category,
+#                     price=price,
+#                     quantity=quantity,
+#                     sellerid=seller_id
+#                 )
+
+#                 # Update the corresponding Cart item status to "1" (purchased)
+#                 Cart.objects.filter(
+#                     userid=user,
+#                     content_type=content_type,
+#                     object_id=item_id,
+#                     status="0"
+#                 ).update(status="1")
+
+#             return JsonResponse({"success": True, "message": "Order placed successfully."}, status=200)
+
+#         except Exception as e:
+#             return JsonResponse({"success": False, "message": str(e)}, status=400)
+
+#     return JsonResponse({"success": False, "message": "Invalid request method."}, status=405)
+
 
 @csrf_exempt
 def view_order(request):
@@ -2582,6 +2662,7 @@ def view_seller_order(request):
                     "total_price": item.price * item.quantity,
                     "category": item.itemcategory,
                     "status": order.status,
+                    "deliverystatus": item.deliverystatus,
                     "image_url": item_details.image.url if item_details.image else '/path/to/default-image.jpg',
                 }
 
@@ -2613,3 +2694,115 @@ def view_seller_order(request):
 
     return JsonResponse({"success": False, "message": "Invalid request method."}, status=405)
 
+
+@csrf_exempt
+def get_all_orders(request):
+    try:
+        # Fetch all orders
+        orders = Order.objects.all()
+
+        # Initialize a list to hold all order details
+        all_order_details = []
+
+        # Loop through each order to extract details
+        for order in orders:
+            # Get the customer's name
+            customer_data = CustomerData.objects.get(userid=order.user.id)
+           
+            # Loop through each order item to extract the item details
+            for order_item in order.items.all():
+                # Get the seller name for each order item
+                try:
+                    seller_data = UserData.objects.get(userid=order_item.sellerid)
+          
+                    seller_name = seller_data.name
+                except (User.DoesNotExist, UserData.DoesNotExist):
+                    seller_name = None  # If no seller exists for this user
+
+                # Get the related item (food, medicine, or accessory)
+                item = None
+                if order_item.itemcategory == 'food':
+                    item = FoodItem.objects.get(id=order_item.object_id)
+                    item_name = item.itemname if item else None
+                elif order_item.itemcategory == 'medicine':
+                    item = Medicine.objects.get(id=order_item.object_id)
+                    item_name = item.medicine_name if item else None
+                elif order_item.itemcategory == 'accessory':
+                    item = Accessory.objects.get(id=order_item.object_id)
+                    item_name = item.accessory_name if item else None
+
+                # Add the order item details to the list
+                all_order_details.append({
+                    'order_id': order.id,
+                    'item_name': item_name,
+                    'item_price': order_item.price,
+                    'item_quantity': order_item.quantity,
+                    'total_price': order_item.price * order_item.quantity,
+                    'payment_id': order.payment_id,
+                    'order_date': order.order_date,
+                    'customer_name': customer_data.name,
+                    'seller_name': seller_name,
+                })
+
+        # Return all the order details as JSON response
+        return JsonResponse({"success": True, "order_details": all_order_details}, status=200)
+
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)}, status=400)
+    
+
+
+@csrf_exempt
+def update_delivery_status(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            order_id = data.get('order_id')
+            item_name = data.get('item_name')
+            new_status = data.get('deliverystatus')
+
+            if not all([order_id, item_name, new_status]):
+                return JsonResponse({"success": False, "message": "Missing required fields."}, status=400)
+
+            # Find the OrderItem based on order and item name
+            order_items = OrderItem.objects.filter(order_id=order_id)
+
+            found = False
+            for item in order_items:
+                actual_item = item.item
+                # Check item name
+                if (hasattr(actual_item, 'itemname') and actual_item.itemname == item_name) or \
+                   (hasattr(actual_item, 'medicine_name') and actual_item.medicine_name == item_name) or \
+                   (hasattr(actual_item, 'accessory_name') and actual_item.accessory_name == item_name):
+                    item.deliverystatus = f"{new_status} at {timezone.now().strftime('%Y-%m-%d %H:%M:%S')}"
+                    item.save()
+                    found = True
+                    break
+
+            if not found:
+                return JsonResponse({"success": False, "message": "OrderItem not found."}, status=404)
+
+            return JsonResponse({"success": True, "message": "Delivery status updated successfully."})
+
+        except Exception as e:
+            return JsonResponse({"success": False, "message": str(e)}, status=400)
+
+    return JsonResponse({"success": False, "message": "Invalid request method."}, status=405)
+
+@csrf_exempt
+def delete_order(request, order_id):
+    if request.method == "DELETE":
+        try:
+            with transaction.atomic():  # Ensure the transaction is atomic
+                # Try to fetch the order with the given ID
+                order = Order.objects.get(id=order_id)
+                
+                # Deleting the order (this will also delete related OrderItems if they have `on_delete=models.CASCADE`)
+                order.delete()
+
+            return JsonResponse({"success": True, "message": "Order deleted successfully."}, status=200)
+        except Order.DoesNotExist:
+            return JsonResponse({"success": False, "message": "Order not found."}, status=404)
+        except Exception as e:
+            return JsonResponse({"success": False, "message": str(e)}, status=400)
+    return JsonResponse({"success": False, "message": "Invalid request method."}, status=405)

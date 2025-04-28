@@ -142,7 +142,9 @@ urlpatterns = [
     path("delete-cart-item/", views.delete_cart_item, name="delete_cart_item"),
     path('view-order/', views.view_order, name='view_order'),
     path('view-seller-order/', views.view_seller_order, name='view_seller_order'),
-
+    path('get_order_details/', views.get_all_orders, name='get_all_orders'),
+    path('update-delivery-status/', views.update_delivery_status),
+    path('delete-order/<int:order_id>/', views.delete_order, name='delete_order'),
 
     
 

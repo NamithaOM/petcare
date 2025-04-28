@@ -4,8 +4,8 @@ import { useAuth } from "./AuthContext"; // Import useAuth to access logout func
 
 export default function Sidebar() {
   const { logout, user } = useAuth();
-  const userType = user?.userType;  // Ensure this is correctly getting the user type
-  
+  const userType = user?.userType; // Ensure this is correctly getting the user type
+
   const navigate = useNavigate(); // Use useNavigate for programmatic navigation
 
   const handleLogout = () => {
@@ -15,31 +15,39 @@ export default function Sidebar() {
 
   return (
     <>
-      <ul className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-        <Link className="sidebar-brand d-flex align-items-center justify-content-center" to="/">
+      <ul
+        className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+        id="accordionSidebar"
+      >
+        <Link
+          className="sidebar-brand d-flex align-items-center justify-content-center"
+          to="/"
+        >
           <div className="sidebar-brand-icon rotate-n-15">
             <i className="fas fa-laugh-wink"></i>
           </div>
-          <div className="sidebar-brand-text mx-3">Pet Care <sup>2025</sup></div>
+          <div className="sidebar-brand-text mx-3">
+            Pet Care <sup>2025</sup>
+          </div>
         </Link>
-
-        <hr className="sidebar-divider my-0" />
-
-        {/* Dashboard link for all users */}
-        <li className="nav-item active">
-          <Link className="nav-link" to="/dashboard">
-            <i className="fas fa-fw fa-tachometer-alt"></i>
-            <span>Dashboard</span>
-          </Link>
-        </li>
-
-        <hr className="sidebar-divider" />
-
-        <div className="sidebar-heading">Addons</div>
 
         {/* Conditional routes based on userType */}
         {userType === "admin" && (
           <>
+            <hr className="sidebar-divider my-0" />
+
+            {/* Dashboard link for all users */}
+            <li className="nav-item active">
+              <Link className="nav-link" to="/admin/dashboard">
+                <i className="fas fa-fw fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+              </Link>
+            </li>
+
+            <hr className="sidebar-divider" />
+
+            <div className="sidebar-heading">Addons</div>
+
             <li className="nav-item">
               <Link className="nav-link" to="/admin/service">
                 <i className="fas fa-fw fa-chart-area"></i>
@@ -84,12 +92,24 @@ export default function Sidebar() {
                 <span>Feedbacks</span>
               </Link>
             </li>
-            
           </>
         )}
 
         {userType === "seller" && (
           <>
+            <hr className="sidebar-divider my-0" />
+
+            {/* Dashboard link for all users */}
+            <li className="nav-item active">
+              <Link className="nav-link" to="/seller/dashboard">
+                <i className="fas fa-fw fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+              </Link>
+            </li>
+
+            <hr className="sidebar-divider" />
+
+            <div className="sidebar-heading">Addons</div>
             <li className="nav-item">
               <Link className="nav-link" to="/seller/sale-items">
                 <i className="fas fa-fw fa-table"></i>
@@ -120,18 +140,25 @@ export default function Sidebar() {
                 <span>Order List</span>
               </Link>
             </li>
-          
           </>
         )}
 
         {userType === "service" && (
           <>
-            <li className="nav-item">
+            <hr className="sidebar-divider my-0" />
+
+            {/* Dashboard link for all users */}
+            <li className="nav-item active">
               <Link className="nav-link" to="/service">
-                <i className="fas fa-fw fa-chart-area"></i>
+                <i className="fas fa-fw fa-tachometer-alt"></i>
                 <span>Dashboard</span>
               </Link>
             </li>
+
+            <hr className="sidebar-divider" />
+
+            <div className="sidebar-heading">Addons</div>
+           
             <li className="nav-item">
               <Link className="nav-link" to="/service/bookings">
                 <i className="fas fa-fw fa-pie-chart"></i>
@@ -144,8 +171,7 @@ export default function Sidebar() {
                 <span>Trainer</span>
               </Link>
             </li>
-        
-            
+
             <li className="nav-item">
               <Link className="nav-link" to="/service/doctorlist">
                 <i className="fas fa-fw fa-user-md"></i>
@@ -158,7 +184,6 @@ export default function Sidebar() {
                 <span>Grooming List</span>
               </Link>
             </li>
-            
           </>
         )}
 

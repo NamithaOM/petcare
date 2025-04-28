@@ -30,6 +30,37 @@ export default function OrderList() {
     }
   };
 
+
+  const deliveryStatuses = ["Ordered", "Shipped", "Reached Nearest Hub", "Out for Delivery", "Delivered"];
+
+const updateDeliveryStatus = async (orderId, itemName, status) => {
+  try {
+    const response = await fetch(`${baseUrl}update-delivery-status/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        order_id: orderId,
+        item_name: itemName,
+        deliverystatus: status,
+      }),
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      alert("Delivery status updated successfully!");
+      fetchOrders(localStorage.getItem("user_id")); // Refresh orders
+    } else {
+      alert(data.message || "Failed to update delivery status.");
+    }
+  } catch (error) {
+    console.error("Error updating delivery status:", error);
+    alert("Failed to update delivery status.");
+  }
+};
+
+
   return (
     <>
       <div id="wrapper">
@@ -57,35 +88,49 @@ export default function OrderList() {
                         <th>Customer Contact</th>
                         <th>Order Date</th>
                         <th>Payment Id</th>
+                        <th>Current Delivery Status</th>
+
                       </tr>
                     </thead>
                     <tbody>
-                      {orders.map((order) =>
-                        order.items.map((item, index) => (
-                          <tr key={`${order.order_id}-${index}`}>
-                            <td>
-                            {/* <img src={`${baseUrl}${accessory.image.startsWith("/") ? accessory.image.slice(1) : accessory.image}`} width="100" height="100" /> */}
-                                
-                              <img
-                                src={`${baseUrl}${item.image_url.startsWith("/") ? item.image_url.slice(1) :item.image_url}`}
-                                alt={item.item_name}
-                                width="50"
-                                height="50"
-                              />
-                            </td>
-                            <td>{item.item_name}</td>
-                            <td>{item.price}</td>
-                            <td>{item.quantity}</td>
-                            <td>{order.customer_details.name}</td>
-                            <td>{order.customer_details.contact}</td>
-                            <td>
-                              {new Date(order.order_date).toLocaleString()}
-                            </td>
-                            <td>{order.payment_id}</td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
+  {orders.map((order) =>
+    order.items.map((item, index) => (
+      <tr key={`${order.order_id}-${index}`}>
+        <td>
+          <img
+            src={`${baseUrl}${item.image_url.startsWith("/") ? item.image_url.slice(1) : item.image_url}`}
+            alt={item.item_name}
+            width="50"
+            height="50"
+          />
+        </td>
+        <td>{item.item_name}</td>
+        <td>{item.price}</td>
+        <td>{item.quantity}</td>
+        <td>{order.customer_details.name}</td>
+        <td>{order.customer_details.contact}</td>
+        <td>{new Date(order.order_date).toLocaleString()}</td>
+        <td>{order.payment_id}</td>
+        <td>{item.deliverystatus || "Not Updated"}</td>
+
+        <td>
+          {/* New Buttons for delivery status */}
+          {deliveryStatuses.map((status) => (
+            <button
+              key={status}
+              onClick={() => updateDeliveryStatus(order.order_id, item.item_name, status)}
+              style={{ margin: "2px", fontSize: "10px" }}
+              className="btn btn-sm btn-primary"
+            >
+              {status}
+            </button>
+          ))}
+        </td>
+      </tr>
+    ))
+  )}
+</tbody>
+
                   </table>
                 </div>
               </div>
