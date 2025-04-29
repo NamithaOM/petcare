@@ -87,44 +87,114 @@ export default function AddGrooming() {
 
   return (
     <div id="wrapper">
-      <Sidebar />
-      <div id="content-wrapper" className="d-flex flex-column">
-        <div id="content">
-          <Header />
-          <div className="container-fluid">
-            <h1 className="h3 mb-4 text-gray-800">Add Grooming Service</h1>
-            {successMessage && <div className="alert alert-success">{successMessage}</div>}
-            {errors.form && <div className="alert alert-danger">{errors.form}</div>}
-            <form className="col-md-6" onSubmit={handleSubmit}>
-              <div className="form-group">
-                <input type="text" className="form-control" name="name" value={formData.name} onChange={handleChange} placeholder="Enter Grooming Name" />
-                {errors.name && <small className="text-danger">{errors.name}</small>}
-              </div>
-              <div className="form-group">
-                <input type="text" className="form-control" name="duration" value={formData.duration} onChange={handleChange} placeholder="Enter Duration" />
-                {errors.duration && <small className="text-danger">{errors.duration}</small>}
-              </div>
-              <div className="form-group">
-                <textarea className="form-control" name="description" value={formData.description} onChange={handleChange} placeholder="Enter Description" />
-                {errors.description && <small className="text-danger">{errors.description}</small>}
-              </div>
-              <div className="form-group">
-                <input type="text" className="form-control" name="price" value={formData.price} onChange={handleChange} placeholder="Enter Price" />
-                {errors.price && <small className="text-danger">{errors.price}</small>}
-              </div>
-              <div className="form-group">
-                <textarea className="form-control" name="products" value={formData.products} onChange={handleChange} placeholder="Enter Products used" />
-                {errors.products && <small className="text-danger">{errors.products}</small>}
-              </div>
-              <div className="form-group">
-                <input type="file" className="form-control" name="photo" onChange={handleFileChange} />
-                {errors.photo && <small className="text-danger">{errors.photo}</small>}
-              </div>
-              <button type="submit" className="btn btn-primary">Submit</button>
-            </form>
+  <Sidebar />
+  <div id="content-wrapper" className="d-flex flex-column">
+    <div id="content">
+      <Header />
+      <div className="container-fluid">
+        <h1 className="h3 mb-4 text-gray-800">Add Grooming Service</h1>
+        {successMessage && <div className="alert alert-success">{successMessage}</div>}
+        {errors.form && <div className="alert alert-danger">{errors.form}</div>}
+
+        <form className="col-md-10" onSubmit={handleSubmit}>
+          {/* Grooming Name */}
+          <div className="form-group row">
+            <label htmlFor="name" className="col-sm-3 col-form-label">Grooming Name</label>
+            <div className="col-sm-9">
+              <input
+                type="text"
+                className="form-control"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter Grooming Name"
+              />
+              {errors.name && <small className="text-danger">{errors.name}</small>}
+            </div>
           </div>
-        </div>
+
+          {/* Duration */}
+          <div className="form-group row">
+            <label htmlFor="duration" className="col-sm-3 col-form-label">Duration</label>
+            <div className="col-sm-9">
+              <input
+                type="text"
+                className="form-control"
+                name="duration"
+                value={formData.duration}
+                onChange={handleChange}
+                placeholder="Enter Duration"
+              />
+              {errors.duration && <small className="text-danger">{errors.duration}</small>}
+            </div>
+          </div>
+
+          {/* Description */}
+          <div className="form-group row">
+            <label htmlFor="description" className="col-sm-3 col-form-label">Description</label>
+            <div className="col-sm-9">
+              <textarea
+                className="form-control"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Enter Description"
+              />
+              {errors.description && <small className="text-danger">{errors.description}</small>}
+            </div>
+          </div>
+
+          {/* Price */}
+          <div className="form-group row">
+            <label htmlFor="price" className="col-sm-3 col-form-label">Price</label>
+            <div className="col-sm-9">
+              <input
+                type="text"
+                className="form-control"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                placeholder="Enter Price"
+              />
+              {errors.price && <small className="text-danger">{errors.price}</small>}
+            </div>
+          </div>
+
+          {/* Products */}
+          <div className="form-group row">
+            <label htmlFor="products" className="col-sm-3 col-form-label">Products Used</label>
+            <div className="col-sm-9">
+              <textarea
+                className="form-control"
+                name="products"
+                value={formData.products}
+                onChange={handleChange}
+                placeholder="Enter Products used"
+              />
+              {errors.products && <small className="text-danger">{errors.products}</small>}
+            </div>
+          </div>
+
+          {/* Photo Upload */}
+          <div className="form-group row">
+            <label htmlFor="photo" className="col-sm-3 col-form-label">Photo</label>
+            <div className="col-sm-9">
+              <input
+                type="file"
+                className="form-control"
+                name="photo"
+                onChange={handleFileChange}
+              />
+              {errors.photo && <small className="text-danger">{errors.photo}</small>}
+            </div>
+          </div>
+
+          <button type="submit" className="btn btn-primary">Submit</button>
+        </form>
       </div>
     </div>
+  </div>
+</div>
+
   );
 }

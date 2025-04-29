@@ -1,6 +1,8 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { baseUrl } from "../../util/BaseUrl";
+import Header from "../Auth/Header";
+import Sidebar from "../Auth/Sidebar";
 
 export default function PetDetails() {
   const location = useLocation();
@@ -8,8 +10,15 @@ export default function PetDetails() {
 
   const pets = location.state?.petInfo || [];
   return (
-    <div className="container mt-5">
-      <h2 className="text-center mb-4 text-success">Pet Profiles</h2>
+
+
+  <div id="wrapper">
+      <Sidebar />
+      <div id="content-wrapper" className="d-flex flex-column">
+        <div id="content">
+          <Header />
+          <div className="container-fluid">
+            <h1 className="h3 mb-4 text-gray-800">Pet profile</h1>
       {pets.length === 0 ? (
         <p>No pet information available.</p>
       ) : (
@@ -116,6 +125,9 @@ export default function PetDetails() {
           </div>
         ))
       )}
+    </div>
+    </div>
+    </div>
     </div>
   );
 }

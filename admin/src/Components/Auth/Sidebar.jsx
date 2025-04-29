@@ -87,6 +87,14 @@ export default function Sidebar() {
               </Link>
             </li>
             <li className="nav-item">
+              <Link className="nav-link" to="/admin/orders">
+                <i className="fas fa-fw fa-shopping-cart
+                "></i>
+                <span>Customer Orders</span>
+              </Link>
+            </li>
+
+            <li className="nav-item">
               <Link className="nav-link" to="/admin/feedbacks">
                 <i className="fas fa-fw fa-user"></i>
                 <span>Feedbacks</span>

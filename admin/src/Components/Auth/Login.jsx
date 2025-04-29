@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext"; // Import AuthContext
-import {jwtDecode} from "jwt-decode"; // Make sure jwt-decode is correctly imported
+import { jwtDecode } from "jwt-decode"; // Make sure jwt-decode is correctly imported
 import dogImage from "../../assets/img/Bg/pets1.jpg";
-
+import { baseUrl } from "../../util/BaseUrl";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,58 +16,54 @@ export default function Login() {
     setError(""); // Reset error state before making the request
 
     try {
-        const response = await fetch("http://127.0.0.1:8000/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ username: email, password }),
-        });
+      const response = await fetch(baseUrl+"login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username: email, password }),
+      });
 
-        const data = await response.json();
+      const data = await response.json();
 
-        if (response.ok) {
-            // Decode the JWT token to extract the userType and other details
-            const decodedToken = jwtDecode(data.token);
+      if (response.ok) {
+        // Decode the JWT token to extract the userType and other details
+        const decodedToken = jwtDecode(data.token);
 
-            // Log decoded token to check the userType and other details
-            console.log(decodedToken);  // Check the structure of the decoded token
+        // Log decoded token to check the userType and other details
+        console.log(decodedToken); // Check the structure of the decoded token
 
-            // Check if decodedToken has userType
-            if (decodedToken.userType) {
-                // Store the token and userType in context (if needed)
-                login(data.token, decodedToken.userType); 
+        // Check if decodedToken has userType
+        if (decodedToken.userType) {
+          // Store the token and userType in context (if needed)
+          // login(data.token, decodedToken.userType);
+          login(data.token, decodedToken.userType, data.user_id);
+       
 
-                // Store the token and user information in localStorage
-                localStorage.setItem("token", data.token);
-                localStorage.setItem("userType", decodedToken.userType); // Store userType
-                localStorage.setItem("user_id", data.user_id);  // Store user_id
-
-                // Navigate based on the userType
-                switch (decodedToken.userType.toLowerCase()) {
-                    case "admin":
-                        navigate("/admin/dashboard");
-                        break;
-                    case "seller":
-                        navigate("/seller/dashboard");
-                        break;
-                    case "service":
-                        navigate("/service");
-                        break;
-                    default:
-                        navigate("/"); // Fallback route
-                }
-            } else {
-                setError("Invalid user type.");
-            }
+          // Navigate based on the userType
+          switch (decodedToken.userType.toLowerCase()) {
+            case "admin":
+              navigate("/admin/dashboard");
+              break;
+            case "seller":
+              navigate("/seller/dashboard");
+              break;
+            case "service":
+              navigate("/service");
+              break;
+            default:
+              navigate("/"); // Fallback route
+          }
         } else {
-            setError(data.error || "Login failed. Please check your credentials.");
+          setError("Invalid user type.");
         }
+      } else {
+        setError(data.error || "Login failed. Please check your credentials.");
+      }
     } catch (err) {
-        setError("Something went wrong. Please try again.");
+      setError("Something went wrong. Please try again.");
     }
-};
-
+  };
 
   return (
     <div className="row justify-content-center">
@@ -75,15 +71,15 @@ export default function Login() {
         <div className="card o-hidden border-0 shadow-lg my-5">
           <div className="card-body p-0">
             <div className="row">
-                 <div
-                            className="col-lg-5 d-none d-lg-block"
-                            style={{
-                              backgroundImage: `url(${dogImage})`,
-                              backgroundSize: "cover",
-                              backgroundPosition: "center",
-                              backgroundRepeat: "no-repeat",
-                            }}
-                          ></div>
+              <div
+                className="col-lg-5 d-none d-lg-block"
+                style={{
+                  backgroundImage: `url(${dogImage})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                }}
+              ></div>
               {/* <div className="col-lg-6 d-none d-lg-block bg-login-image"></div> */}
               <div className="col-lg-6">
                 <div className="p-5">
@@ -120,11 +116,11 @@ export default function Login() {
                     </button>
                   </form>
                   <hr />
-                  <div className="text-center">
+                  {/* <div className="text-center">
                     <a className="small" href="/forgotpassword">
                       Forgot Password?
                     </a>
-                  </div>
+                  </div> */}
                   <div className="text-center">
                     <a className="small" href="/register">
                       Create an Account!

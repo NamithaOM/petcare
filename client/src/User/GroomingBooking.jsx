@@ -39,6 +39,7 @@ export default function GroomingBooking() {
               <th>Payment</th>
               <th>Payment ID</th>
               <th>Status</th>
+              <th>Reason</th>
             </tr>
           </thead>
           <tbody>
@@ -52,7 +53,8 @@ export default function GroomingBooking() {
                   <td>{booking.session}</td>
                   <td>{booking.fees}</td>
                   <td>{booking.paymentId}</td>
-                  <td>{booking.status === "1" ? "Confirmed" : "Pending"}</td>
+                  <td>{booking.status === "1" ? "Confirmed" : "Cancelled"}</td>
+                  <td>{booking.reason}</td>
                 </tr>
               ))
             ) : (

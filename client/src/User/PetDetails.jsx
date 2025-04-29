@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Header from '../Auth/Header';
 import Footer from '../Auth/Footer';
 import { baseUrl } from "../util/BaseUrl";
+import { useNavigate } from "react-router-dom";
 
 export default function PetDetails() {
   const [pets, setPets] = useState([]);
@@ -21,6 +22,7 @@ export default function PetDetails() {
   const [imagePreview, setImagePreview] = useState(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+const navigate = useNavigate();
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
@@ -105,6 +107,7 @@ export default function PetDetails() {
   
       if (response.ok) {
         setMessage("Pet details submitted successfully!");
+        navigate('/petprofile')
         setError("");
         setFormData({
           petid: "",

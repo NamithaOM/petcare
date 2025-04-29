@@ -103,7 +103,7 @@ const navigate= useNavigate();
       description: "Shopping Payment",
       handler: function (response) {
         const paymentId = response.razorpay_payment_id;
-        alert("Payment Successful! Payment ID: " + paymentId);
+        // alert("Payment Successful! Payment ID: " + paymentId);
 
         const orderItems = cartItems.map((item) => ({
           content_type: item.content_type, // Make sure this is present and valid
@@ -267,7 +267,7 @@ const navigate= useNavigate();
                   borderRadius: "10px",
                 }}
               >
-                <h5 className="mb-3">Total Amount:₹{calculateTotal()}</h5>
+                <h5 className="mb-3">Total Amount &nbsp;:&nbsp;₹ &nbsp;{calculateTotal()}</h5>
                 <button
                   className="btn btn-primary btn-block"
                   onClick={handlePayment}

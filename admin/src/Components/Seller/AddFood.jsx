@@ -142,7 +142,7 @@ export default function AddFood() {
                 <div className="row">
                   <div className="col">
                     <form
-                      className="col-12"
+                      className="col-12 mb-4"
                       onSubmit={handleSubmit}
                       encType="multipart/form-data"
                     >
@@ -181,7 +181,7 @@ export default function AddFood() {
                         <div className="form-group col-6">
                           <label>Quantity (in Kg)</label>
                           <input
-                            type="text"
+                            type="number"
                             name="quantity"
                             className="form-control"
                             value={formData.quantity}
@@ -209,7 +209,7 @@ export default function AddFood() {
                         <div className="form-group col-6">
                           <label>Price</label>
                           <input
-                            type="text"
+                            type="number"
                             name="price"
                             className="form-control"
                             value={formData.price}
@@ -306,10 +306,7 @@ export default function AddFood() {
                         </div>
                       </div>
 
-                      <button
-                        type="submit"
-                        className="btn btn-primary btn-block"
-                      >
+                      <button type="submit" className="btn btn-primary">
                         Submit
                       </button>
                     </form>

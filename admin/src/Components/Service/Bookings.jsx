@@ -3,18 +3,83 @@ import Sidebar from "../Auth/Sidebar";
 import Header from "../Auth/Header";
 import { useNavigate } from "react-router-dom";
 import { baseUrl } from "../../util/BaseUrl";
+import { Button, Modal } from "react-bootstrap";
 
 export default function Bookings() {
   const [formData, setFormData] = useState({ userid: "" });
   const [bookings, setBookings] = useState([]);
   const [activeTab, setActiveTab] = useState("");
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
+  const [selectedBookingId, setSelectedBookingId] = useState(null);
+  const [selectedBookingType, setSelectedBookingType] = useState("");
 
   const handlePetDetails = (booking) => {
     navigate("/service/petdetails", { state: { petInfo: booking.pets } });
   };
-  
-  
+
+ 
+
+function handleCancel(bookingId, bookingType) {
+  setSelectedBookingId(bookingId);
+  setSelectedBookingType(bookingType);
+  setShowModal(true);
+}
+
+async function submitCancellation() {
+  if (!cancelReason.trim()) {
+    alert("Cancellation reason is required.");
+    return;
+  }
+
+  await cancelBooking(selectedBookingId, cancelReason, selectedBookingType);
+  setShowModal(false);
+  setCancelReason("");
+}
+
+
+  async function cancelBooking(bookingId, reason, bookingType) {
+     let url = '';
+console.log(url);
+
+    if (bookingType === "grooming") {
+      url = `${baseUrl}`+"cancel_grooming_booking/";
+    } else if (bookingType === "doctor") {
+      url = `${baseUrl}`+"cancel_doctor_booking/";
+    } else if (bookingType === "trainer") {
+      url = `${baseUrl}`+"cancel_trainer_booking/";
+    } else {
+      alert("Invalid booking type");
+      return;
+    }
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          bookingId: bookingId,
+          reason: reason,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data.message); // or show success toast
+        // Optionally, refresh the list
+      } else {
+        alert(data.error || "Something went wrong");
+      }
+    } catch (error) {
+      console.error("Error cancelling booking:", error);
+      alert("Error cancelling booking");
+    }
+  }
+
   useEffect(() => {
     const storedUserId = localStorage.getItem("user_id");
     if (storedUserId) {
@@ -209,7 +274,7 @@ export default function Bookings() {
                   style={{ width: "100%", borderCollapse: "collapse" }}
                 >
                   <thead className="dg-secondary">
-                  <tr style={{ backgroundColor: "#CAE0BC" }}>
+                    <tr style={{ backgroundColor: "#CAE0BC" }}>
                       <th>Trainer Name</th>
                       <th>Customer</th>
                       <th>Date</th>
@@ -218,7 +283,8 @@ export default function Bookings() {
                       <th>Payment ID</th>
                       <th>Contact</th>
                       <th>Status</th>
-                    <th></th>
+                      <th></th>
+                      <th></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -231,7 +297,7 @@ export default function Bookings() {
                         <td>{booking.fees}</td>
                         <td>{booking.paymentId}</td>
                         <td>{booking.customer_contact}</td>
-                       
+
                         <td>
                           {booking.status === "1"
                             ? "Confirmed"
@@ -239,7 +305,24 @@ export default function Bookings() {
                             ? "Cancelled"
                             : "Pending"}
                         </td>
-                        <td> <button className="btn btn-primary" onClick={() => handlePetDetails(booking)}>Pet Details</button>
+                        <td>
+                          {" "}
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => handlePetDetails(booking)}
+                          >
+                            Pet Details
+                          </button>
+                        </td>
+                        <td>
+                          {booking.status !== "2" && (
+                            <button className="btn btn-danger "
+                            onClick={() => handleCancel(booking.booking_id, "trainer")}
+
+                            >
+                              Cancel
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -254,7 +337,7 @@ export default function Bookings() {
                   style={{ width: "100%", borderCollapse: "collapse" }}
                 >
                   <thead>
-                    <tr style={{background:"#9EC6F3"}}>
+                    <tr style={{ background: "#9EC6F3" }}>
                       <th>Doctor Name</th>
                       <th>Customer</th>
                       <th>Date</th>
@@ -263,6 +346,7 @@ export default function Bookings() {
                       <th>Payment ID</th>
                       <th>Contact</th>
                       <th>Status</th>
+                      <th></th>
                       <th></th>
                     </tr>
                   </thead>
@@ -284,7 +368,22 @@ export default function Bookings() {
                             : "Pending"}
                         </td>
                         <td>
-                        <button className="btn btn-primary" onClick={() => handlePetDetails(booking)}>Pet Details</button>
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => handlePetDetails(booking)}
+                          >
+                            Pet Details
+                          </button>
+                        </td>
+                        <td>
+                          {booking.status !== "2" && (
+                            <button className="btn btn-danger"
+                            onClick={() => handleCancel(booking.booking_id, "doctor")}
+
+                            >
+                              Cancel
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -299,7 +398,7 @@ export default function Bookings() {
                   style={{ width: "100%", borderCollapse: "collapse" }}
                 >
                   <thead>
-                    <tr style={{background:"#FFFECE"}}>
+                    <tr style={{ background: "#FFFECE" }}>
                       <th>Grooming</th>
                       <th>Customer</th>
                       <th>Date</th>
@@ -307,8 +406,9 @@ export default function Bookings() {
                       <th>Fees</th>
                       <th>Payment ID</th>
                       <th>Contact</th>
+                      <th></th>
                       <th>Status</th>
-                      <td></td>
+                      <th></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -322,6 +422,15 @@ export default function Bookings() {
                         <td>{booking.paymentId}</td>
                         <td>{booking.customer_contact}</td>
                         <td>
+                          {" "}
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => handlePetDetails(booking)}
+                          >
+                            Pet Details
+                          </button>
+                        </td>
+                        <td>
                           {booking.status === "1"
                             ? "Confirmed"
                             : booking.status === "2"
@@ -329,7 +438,14 @@ export default function Bookings() {
                             : "Pending"}
                         </td>
                         <td>
-                        <button className="btn btn-primary" onClick={() => handlePetDetails(booking)}>Pet Details</button>
+                          {booking.status !== "2" && (
+                            <button className="btn btn-danger"
+                            onClick={() => handleCancel(booking.booking_id, "grooming")}
+
+                            >
+                              Cancel
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -343,6 +459,35 @@ export default function Bookings() {
           </div>
         </div>
       </div>
+
+      {/* Add Cancel Booking Modal */}
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Cancel Booking</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h5>Are you sure you want to cancel this booking?</h5>
+          <textarea
+            placeholder="Please provide a reason for cancellation"
+            value={cancelReason}
+            onChange={(e) => setCancelReason(e.target.value)}
+            style={{
+              width: "100%",
+              height: "100px",
+              marginBottom: "20px",
+              padding: "10px",
+              borderRadius: "5px",
+              border: "1px solid #ccc",
+            }}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+      
+          <Button variant="danger" onClick={submitCancellation}>
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }

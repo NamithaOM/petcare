@@ -91,48 +91,85 @@ export default function AddDoctor() {
 
   return (
     <div id="wrapper">
-      <Sidebar />
-      <div id="content-wrapper" className="d-flex flex-column">
-        <div id="content">
-          <Header />
-          <div className="container-fluid">
-            <h1 className="h3 mb-4 text-gray-800">Add Doctor</h1>
-            {successMessage && <div className="alert alert-success">{successMessage}</div>}
-            {errors.form && <div className="alert alert-danger">{errors.form}</div>}
-            <form className="col-md-6" onSubmit={handleSubmit}>
-              <div className="form-group">
-                <input type="text" className="form-control" name="name" value={formData.name} onChange={handleChange} placeholder="Enter Full Name" />
-                {errors.name && <small className="text-danger">{errors.name}</small>}
-              </div>
-              <div className="form-group">
-                <input type="text" className="form-control" name="experience" value={formData.experience} onChange={handleChange} placeholder="Enter Experience" />
-                {errors.experience && <small className="text-danger">{errors.experience}</small>}
-              </div>
-              <div className="form-group">
-                <input type="text" className="form-control" name="qualification" value={formData.qualification} onChange={handleChange} placeholder="Enter Qualification" />
-                {errors.qualification && <small className="text-danger">{errors.qualification}</small>}
-              </div>
-              <div className="form-group">
-                <input type="text" className="form-control" name="contact" value={formData.contact} onChange={handleChange} placeholder="Enter Contact" />
-                {errors.contact && <small className="text-danger">{errors.contact}</small>}
-              </div>
-              <div className="form-group">
-                <input type="number" className="form-control" name="fees" value={formData.fees} onChange={handleChange} placeholder="Fees for a session" />
-                {errors.contact && <small className="text-danger">{errors.fees}</small>}
-              </div>
-              <div className="form-group">
-                <input type="file" className="form-control" name="image" onChange={handleFileChange} accept="image/*" />
-                {errors.image && <small className="text-danger">{errors.image}</small>}
-              </div>
-              {/* Added Remarks Input Field */}
-              <div className="form-group">
-                <textarea className="form-control" name="remarks" value={formData.remarks} onChange={handleChange} placeholder="Enter Remarks"></textarea>
-              </div>
-              <button type="submit" className="btn btn-primary">Submit</button>
-            </form>
+  <Sidebar />
+  <div id="content-wrapper" className="d-flex flex-column">
+    <div id="content">
+      <Header />
+      <div className="container-fluid">
+        <h1 className="h3 mb-4 text-gray-800">Add Doctor</h1>
+        {successMessage && <div className="alert alert-success">{successMessage}</div>}
+        {errors.form && <div className="alert alert-danger">{errors.form}</div>}
+        
+        <form className="col-md-10" onSubmit={handleSubmit}>
+          {/* Name */}
+          <div className="form-group row">
+            <label className="col-sm-3 col-form-label">Full Name</label>
+            <div className="col-sm-9">
+              <input type="text" className="form-control" name="name" value={formData.name} onChange={handleChange} placeholder="Enter Full Name" />
+              {errors.name && <small className="text-danger">{errors.name}</small>}
+            </div>
           </div>
-        </div>
+
+          {/* Experience */}
+          <div className="form-group row">
+            <label className="col-sm-3 col-form-label">Experience</label>
+            <div className="col-sm-9">
+              <input type="text" className="form-control" name="experience" value={formData.experience} onChange={handleChange} placeholder="Enter Experience" />
+              {errors.experience && <small className="text-danger">{errors.experience}</small>}
+            </div>
+          </div>
+
+          {/* Qualification */}
+          <div className="form-group row">
+            <label className="col-sm-3 col-form-label">Qualification</label>
+            <div className="col-sm-9">
+              <input type="text" className="form-control" name="qualification" value={formData.qualification} onChange={handleChange} placeholder="Enter Qualification" />
+              {errors.qualification && <small className="text-danger">{errors.qualification}</small>}
+            </div>
+          </div>
+
+          {/* Contact */}
+          <div className="form-group row">
+            <label className="col-sm-3 col-form-label">Contact</label>
+            <div className="col-sm-9">
+              <input type="text" className="form-control" name="contact" value={formData.contact} onChange={handleChange} placeholder="Enter Contact" />
+              {errors.contact && <small className="text-danger">{errors.contact}</small>}
+            </div>
+          </div>
+
+          {/* Fees */}
+          <div className="form-group row">
+            <label className="col-sm-3 col-form-label">Fees</label>
+            <div className="col-sm-9">
+              <input type="number" className="form-control" name="fees" value={formData.fees} onChange={handleChange} placeholder="Fees for a session" />
+              {errors.fees && <small className="text-danger">{errors.fees}</small>}
+            </div>
+          </div>
+
+          {/* Image */}
+          <div className="form-group row">
+            <label className="col-sm-3 col-form-label">Image</label>
+            <div className="col-sm-9">
+              <input type="file" className="form-control" name="image" onChange={handleFileChange} accept="image/*" />
+              {errors.image && <small className="text-danger">{errors.image}</small>}
+            </div>
+          </div>
+
+          {/* Remarks */}
+          <div className="form-group row">
+            <label className="col-sm-3 col-form-label">Remarks</label>
+            <div className="col-sm-9">
+              <textarea className="form-control" name="remarks" value={formData.remarks} onChange={handleChange} placeholder="Enter Remarks"></textarea>
+              {errors.remarks && <small className="text-danger">{errors.remarks}</small>}
+            </div>
+          </div>
+
+          <button type="submit" className="btn btn-primary">Submit</button>
+        </form>
       </div>
     </div>
+  </div>
+</div>
+
   );
 }

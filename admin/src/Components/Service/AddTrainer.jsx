@@ -81,96 +81,121 @@ export default function AddTrainer() {
 
   return (
     <div id="wrapper">
-      <Sidebar />
-      <div id="content-wrapper" className="d-flex flex-column">
-        <div id="content">
-          <Header />
-          <div className="container-fluid">
-            <div className="d-sm-flex align-items-center justify-content-between mb-4">
-              <h1 className="h3 mb-0 text-gray-800">Add Trainer</h1>
+  <Sidebar />
+  <div id="content-wrapper" className="d-flex flex-column">
+    <div id="content">
+      <Header />
+      <div className="container-fluid">
+        <div className="d-sm-flex align-items-center justify-content-between mb-4">
+          <h1 className="h3 mb-0 text-gray-800">Add Trainer</h1>
+        </div>
+
+        <div className="row">
+          <form className="pets col-10" onSubmit={handleSubmit} encType="multipart/form-data">
+            {successMessage && <div className="alert alert-success">{successMessage}</div>}
+
+            {/* Full Name */}
+            <div className="form-group row">
+              <label htmlFor="name" className="col-sm-3 col-form-label">Full Name</label>
+              <div className="col-sm-9">
+                <input
+                  type="text"
+                  className="form-control form-control-user"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Enter Full Name"
+                />
+                {errors.name && <small className="text-danger">{errors.name}</small>}
+              </div>
             </div>
 
-            <div className="row">
-              <form className="pets col-6" onSubmit={handleSubmit} encType="multipart/form-data">
-                {successMessage && <div className="alert alert-success">{successMessage}</div>}
-
-                <div className="form-group">
-                  <input
-                    type="text"
-                    className="form-control form-control-user"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Enter Full Name"
-                  />
-                  {errors.name && <small className="text-danger">{errors.name}</small>}
-                </div>
-
-                <div className="form-group">
-                  <input
-                    type="text"
-                    className="form-control form-control-user"
-                    name="experience"
-                    value={formData.experience}
-                    onChange={handleChange}
-                    placeholder="Enter Experience"
-                  />
-                  {errors.experience && <small className="text-danger">{errors.experience}</small>}
-                </div>
-
-                <div className="form-group">
-                  <input
-                    type="text"
-                    className="form-control form-control-user"
-                    name="contact"
-                    value={formData.contact}
-                    onChange={handleChange}
-                    placeholder="Enter Contact"
-                  />
-                  {errors.contact && <small className="text-danger">{errors.contact}</small>}
-                </div>
-
-                <div className="form-group">
-                  <textarea
-                    className="form-control form-control-user"
-                    name="remarks"
-                    value={formData.remarks}
-                    onChange={handleChange}
-                    placeholder="Enter Remarks"
-                    rows="3"
-                  ></textarea>
-                </div>
-
-                <div className="form-group">
-                  <input
-                    type="number"
-                    className="form-control form-control-user"
-                    name="fees"
-                    value={formData.fees}
-                    onChange={handleChange}
-                    placeholder="Fees for a session"
-                  />
-                  {errors.fees && <small className="text-danger">{errors.fees}</small>}
-                </div>
-
-                <div className="form-group">
-                  <input
-                    type="file"
-                    className="form-control form-control-user"
-                    onChange={handleFileChange}
-                    accept="image/*"
-                  />
-                  {errors.image && <small className="text-danger">{errors.image}</small>}
-                </div>
-
-                <button type="submit" className="btn btn-primary btn-user btn-block">
-                  Submit
-                </button>
-              </form>
+            {/* Experience */}
+            <div className="form-group row">
+              <label htmlFor="experience" className="col-sm-3 col-form-label">Experience</label>
+              <div className="col-sm-9">
+                <input
+                  type="text"
+                  className="form-control form-control-user"
+                  name="experience"
+                  value={formData.experience}
+                  onChange={handleChange}
+                  placeholder="Enter Experience"
+                />
+                {errors.experience && <small className="text-danger">{errors.experience}</small>}
+              </div>
             </div>
-          </div>
+
+            {/* Contact */}
+            <div className="form-group row">
+              <label htmlFor="contact" className="col-sm-3 col-form-label">Contact</label>
+              <div className="col-sm-9">
+                <input
+                  type="text"
+                  className="form-control form-control-user"
+                  name="contact"
+                  value={formData.contact}
+                  onChange={handleChange}
+                  placeholder="Enter Contact"
+                />
+                {errors.contact && <small className="text-danger">{errors.contact}</small>}
+              </div>
+            </div>
+
+            {/* Remarks */}
+            <div className="form-group row">
+              <label htmlFor="remarks" className="col-sm-3 col-form-label">Remarks</label>
+              <div className="col-sm-9">
+                <textarea
+                  className="form-control form-control-user"
+                  name="remarks"
+                  value={formData.remarks}
+                  onChange={handleChange}
+                  placeholder="Enter Remarks"
+                  rows="3"
+                ></textarea>
+              </div>
+            </div>
+
+            {/* Fees */}
+            <div className="form-group row">
+              <label htmlFor="fees" className="col-sm-3 col-form-label">Fees for a session</label>
+              <div className="col-sm-9">
+                <input
+                  type="number"
+                  className="form-control form-control-user"
+                  name="fees"
+                  value={formData.fees}
+                  onChange={handleChange}
+                  placeholder="Fees for a session"
+                />
+                {errors.fees && <small className="text-danger">{errors.fees}</small>}
+              </div>
+            </div>
+
+            {/* Image Upload */}
+            <div className="form-group row">
+              <label htmlFor="image" className="col-sm-3 col-form-label">Image</label>
+              <div className="col-sm-9">
+                <input
+                  type="file"
+                  className="form-control form-control-user"
+                  onChange={handleFileChange}
+                  accept="image/*"
+                />
+                {errors.image && <small className="text-danger">{errors.image}</small>}
+              </div>
+            </div>
+
+            <button type="submit" className="btn btn-primary btn-user ">
+              Submit
+            </button>
+          </form>
         </div>
       </div>
     </div>
+  </div>
+</div>
+
   );
 }

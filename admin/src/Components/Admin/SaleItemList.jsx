@@ -5,9 +5,9 @@ import { baseUrl } from "../../util/BaseUrl";
 
 export default function SaleItemList() {
   const [formData, setFormData] = useState({ itemname: "", itemimage: null });
-
   const [items, setItems] = useState([]);
   const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     fetchItems();
@@ -18,10 +18,7 @@ export default function SaleItemList() {
       const response = await fetch(`${baseUrl}list_Item/`);
       if (!response.ok) throw new Error("Failed to fetch items");
       const data = await response.json();
-
-      // Assuming data contains a key `StoreItems` that holds the array
-      setItems(data.StoreItems || []); // Use the array inside StoreItems key or an empty array if not present
-      console.log(data); // Log the data to confirm the structure
+      setItems(data.StoreItems || []);
     } catch (error) {
       console.error("Error fetching items:", error);
       setMessage("Error fetching items");
@@ -31,19 +28,37 @@ export default function SaleItemList() {
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === "itemimage") {
-      setFormData({ ...formData, [name]: files[0] });  // Set the first file selected
+      setFormData({ ...formData, [name]: files[0] });
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Reset errors before validating
+    setErrors({});
+
+    // Validation for required fields
+    const newErrors = {};
+    if (!formData.itemname) {
+      newErrors.itemname = "Item name is required";
+    }
+    if (!formData.itemimage) {
+      newErrors.itemimage = "Item image is required";
+    }
+
+    // If there are validation errors, stop the submission
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    // Proceed with form submission if no validation errors
     const form = new FormData();
     form.append("itemname", formData.itemname);
     form.append("itemimage", formData.itemimage);
-  
+
     try {
       const response = await fetch(`${baseUrl}create_Item/`, {
         method: "POST",
@@ -62,31 +77,29 @@ export default function SaleItemList() {
       setMessage("Error submitting item");
     }
   };
-  
 
- const handleUpdate = async (id, itemname, itemimage = null) => {
-  const form = new FormData();
-  form.append("itemname", itemname);
-  if (itemimage) form.append("itemimage", itemimage);
+  const handleUpdate = async (id, itemname, itemimage = null) => {
+    const form = new FormData();
+    form.append("itemname", itemname);
+    if (itemimage) form.append("itemimage", itemimage);
 
-  try {
-    const response = await fetch(`${baseUrl}update_Item/${id}/`, {
-      method: "POST",
-      body: form,
-    });
-    const data = await response.json();
-    if (response.ok) {
-      setMessage(data.message);
-      fetchItems();
-    } else {
-      setMessage(data.error);
+    try {
+      const response = await fetch(`${baseUrl}update_Item/${id}/`, {
+        method: "POST",
+        body: form,
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setMessage(data.message);
+        fetchItems();
+      } else {
+        setMessage(data.error);
+      }
+    } catch (error) {
+      console.error("Error updating item:", error);
+      setMessage("Error updating item");
     }
-  } catch (error) {
-    console.error("Error updating item:", error);
-    setMessage("Error updating item");
-  }
-};
-
+  };
 
   const handleDelete = async (id) => {
     try {
@@ -128,8 +141,10 @@ export default function SaleItemList() {
                       value={formData.itemname}
                       onChange={handleChange}
                       placeholder="Enter Sale Item"
-                      required
                     />
+                    {errors.itemname && (
+                      <div className="text-danger">{errors.itemname}</div>
+                    )}
                   </div>
                   <div className="form-group">
                     <input
@@ -137,11 +152,11 @@ export default function SaleItemList() {
                       className="form-control"
                       id="itemimage"
                       name="itemimage"
-                      
                       onChange={handleChange}
-                    
-                      required
                     />
+                    {errors.itemimage && (
+                      <div className="text-danger">{errors.itemimage}</div>
+                    )}
                   </div>
                   <button type="submit" className="btn btn-primary btn-block">
                     Submit
@@ -174,7 +189,7 @@ export default function SaleItemList() {
                               <td>
                                 {item.itemimage ? (
                                   <img
-                                    src={baseUrl +"media/"+ item.itemimage}
+                                    src={baseUrl + "media/" + item.itemimage}
                                     alt={item.itemname}
                                     style={{
                                       width: "50px",

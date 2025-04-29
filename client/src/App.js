@@ -35,6 +35,9 @@ import Order from "./User/Order";
 import Profile from "./User/Profile";
 import UpdateProfile from "./User/UpdateProfile";
 import New from "./Auth/New";
+import UserWallet from "./User/UserWallet";
+import Clients from "./Auth/Serve";
+import Scroll from "./Auth/Scroll";
 
 function App() {
   const [userType] = useState(localStorage.getItem("userType"));
@@ -54,7 +57,9 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/forms" element={<Forms />} />
             <Route path="/details" element={<Details />} />
-            <Route path="/new" element={<New />} />
+            <Route path="/scroll" element={<Scroll/>} />
+            <Route path="/client" element={<Clients />} />
+
           </>
         ) : userType === "customer" ? (
           <>
@@ -82,6 +87,7 @@ function App() {
             <Route path="/order" element={<Order />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/updateprofile/:id" element={<UpdateProfile />} />
+            <Route path="/wallet" element={<UserWallet />}/>
 
 
 

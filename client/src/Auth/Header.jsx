@@ -28,6 +28,11 @@ export default function Header() {
     navigate("/profile");
   };
 
+  
+  const handleWallet = () => {
+    navigate("/wallet");
+  };
+  
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userType");
@@ -247,7 +252,7 @@ export default function Header() {
                     style={{ cursor: "pointer" }}
                   >
                     <FaUserCircle size={20} className="me-1" />
-                    Account
+                   
                   </span>
                   <ul className="dropdown-menu">
                   <li>
@@ -257,6 +262,15 @@ export default function Header() {
                         style={{ cursor: "pointer" }}
                       >
                        Profile
+                      </span>
+                    </li>
+                    <li>
+                      <span
+                        className="dropdown-item"
+                        onClick={handleWallet}
+                        style={{ cursor: "pointer" }}
+                      >
+                       Wallet
                       </span>
                     </li>
                     <li>

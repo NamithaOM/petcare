@@ -35,10 +35,6 @@ const PetProfiles = () => {
     }
   }, [userId]);
 
-  if (!userId) return <div className="text-center mt-5">Loading...</div>;
-  if (pets.length === 0)
-    return <div className="text-center mt-5">No pets found for this user.</div>;
-
   return (
     <>
       <Header />

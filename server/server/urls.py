@@ -145,8 +145,10 @@ urlpatterns = [
     path('get_order_details/', views.get_all_orders, name='get_all_orders'),
     path('update-delivery-status/', views.update_delivery_status),
     path('delete-order/<int:order_id>/', views.delete_order, name='delete_order'),
-
-    
+    path('cancel_grooming_booking/', views.cancel_grooming_booking),
+    path('cancel_doctor_booking/', views.cancel_doctor_booking),
+    path('cancel_trainer_booking/', views.cancel_trainer_booking),
+    path("view_refunds/<int:user_id>/", views.view_user_refunds, name="view_user_refunds"),
 
 ] 
 if settings.DEBUG:

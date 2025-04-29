@@ -182,7 +182,7 @@ class DoctorBooking(models.Model):
     paymentId = models.CharField(max_length=200)
     serviceCenter = models.CharField(max_length=100, null=True)
     userid = models.ForeignKey(User, on_delete=models.CASCADE)  
-
+    cancellation_reason = models.TextField(null=True, blank=True) 
     def __str__(self):
         return self.doctorid
     
@@ -195,7 +195,7 @@ class TrainerBooking(models.Model):
     paymentId = models.CharField(max_length=100)
     serviceCenter = models.CharField(max_length=100)
     status = models.CharField(max_length=10, default="1")
-
+    cancellation_reason = models.TextField(null=True, blank=True) 
     def __str__(self):
           return self.date
     
@@ -231,7 +231,7 @@ class GroomingBooking(models.Model):
     paymentId = models.CharField(max_length=100)
     serviceCenter = models.CharField(max_length=100)
     status = models.CharField(max_length=10, default="1")  # 1 = active, 0 = canceled, etc.
-
+    cancellation_reason = models.TextField(null=True, blank=True) 
     def __str__(self):
          return self.date
     
@@ -295,8 +295,11 @@ class OrderItem(models.Model):
 # refund
 class customerRefund(models.Model):
     userId = models.ForeignKey(User, on_delete=models.CASCADE)
-    amount = models.CharField(default='0')
-    orderId = models.ForeignKey(Order, on_delete=models.CASCADE)
-
+    amount = models.CharField()
+    balance = models.CharField(default='0')
+    date = models.CharField()
+    service_center = models.CharField()
+    service = models.CharField(null=True)
+    
     def __str__(self):
         return self.amount

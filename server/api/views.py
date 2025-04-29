@@ -181,9 +181,9 @@ def create_pet(request):
         petname = request.POST.get('petname')
         petimage = request.FILES.get('petimage')  # Get uploaded image
 
-        if not petname:
-            return JsonResponse({'error': 'Pet name is required'}, status=400)
-
+        if not petname or not petimage:
+            return JsonResponse({'error': 'Both pet name and pet image are required'}, status=400)
+        
         if PetList.objects.filter(petname=petname).exists():
             return JsonResponse({'error': 'Pet already exists'}, status=400)
 
@@ -404,21 +404,31 @@ def deleteDoctor(request, doctor_id):
 
 @csrf_exempt
 def list_doctors(request):
-    doctors = Doctordetails.objects.all()
-    doctor_list = [
-        {
-            "id": doctor.id,
-            "name": doctor.name,
-            "experience": doctor.experience,
-            "qualification": doctor.qualification,
-            "contact": doctor.contact,
-            "fees": doctor.fees,
-            "remarks": doctor.remarks,
-            "photo": request.build_absolute_uri(doctor.photo.url) if doctor.photo else None,
-        }
-        for doctor in doctors
-    ]
-    return JsonResponse(doctor_list, safe=False)
+    if request.method == "GET":
+        try:
+            user_id = request.GET.get("id")
+            if not user_id:
+                return JsonResponse({"error": "User ID is required"}, status=400)
+
+            doctors = Doctordetails.objects.filter(userid__id=user_id)
+            doctor_list = [
+                {
+                    "id": doctor.id,
+                    "name": doctor.name,
+                    "experience": doctor.experience,
+                    "qualification": doctor.qualification,
+                    "contact": doctor.contact,
+                    "fees": doctor.fees,
+                    "remarks": doctor.remarks,
+                    "photo": request.build_absolute_uri(doctor.photo.url) if doctor.photo else None,
+                }
+                for doctor in doctors
+            ]
+            return JsonResponse(doctor_list, safe=False, status=200)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    
+    return JsonResponse({"error": "Invalid request method"}, status=405)
 
 @csrf_exempt
 def view_doctor(request, id):
@@ -691,9 +701,14 @@ def allgrooming(request):
 def list_Grooming(request):
     if request.method == "GET":
         try:
-            grooming_list = []
+            user_id = request.GET.get("id")
+            if not user_id:
+                return JsonResponse({"error": "User ID is required"}, status=400)
 
-            for grooming in Groomingdetails.objects.all():
+            grooming_list = []
+            groomings = Groomingdetails.objects.filter(userid__id=user_id)
+
+            for grooming in groomings:
                 grooming_data = {
                     "id": grooming.id,
                     "name": grooming.name,
@@ -1352,6 +1367,7 @@ def edit_accessory(request, accessoryid):
             return JsonResponse({"error": str(e)}, status=500)
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
+
 @csrf_exempt
 def createCustomer(request):
     if request.method == 'POST':
@@ -1379,7 +1395,7 @@ def createCustomer(request):
             user_data = CustomerData.objects.create(
                 name=name,
                 contact=contact,
-                address=address,  # make sure your UserData model has this field
+                address=address,  # make sure your CustomerData model has this field
                 userid=user,
                 usertype=usertype
             )
@@ -1389,7 +1405,7 @@ def createCustomer(request):
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+            return JsonResponse({'error': f"An error occurred: {str(e)}"}, status=500)
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
@@ -1733,6 +1749,7 @@ def view_doctor_booking(request, userid):
                     "session": booking.session,
                     "fees": booking.fees,
                     "status": booking.status,
+                    "reason":booking.cancellation_reason,
                     "paymentId": booking.paymentId,
                     "serviceCenter": booking.serviceCenter,
                     "doctor_name": booking.doctorid.name,
@@ -1832,7 +1849,8 @@ def view_trainer_booking(request, userid):
                 "session": booking.session,
                 "fees": booking.fees,
                 "paymentId": booking.paymentId,
-                "status": booking.status
+                "status": booking.status,
+                "reason":booking.cancellation_reason
             })
 
         return JsonResponse({"bookings": booking_list}, status=200)
@@ -1856,7 +1874,8 @@ def check_grooming_availability(request):
         exists = GroomingBooking.objects.filter(
             groomingid__id=grooming_id,
             date=date,
-            session=session
+            session=session,
+            status="1"
         ).exists()
 
         if exists:
@@ -1922,6 +1941,7 @@ def view_grooming_booking(request, userid):
                 "session": booking.session,
                 "fees": booking.price,
                 "paymentId": booking.paymentId,
+                "reason":booking.cancellation_reason,
                 "status": str(booking.status),  # Convert to string if needed on frontend
             })
 
@@ -2588,6 +2608,7 @@ def view_order(request):
                         "total_price": item.price * item.quantity,
                         "category": item.itemcategory,
                         "status": order.status,
+                        "deliverystatus": item.deliverystatus,
                         "image_url": item_details.image.url if item_details.image else '/path/to/default-image.jpg',
                     }
 
@@ -2806,3 +2827,132 @@ def delete_order(request, order_id):
         except Exception as e:
             return JsonResponse({"success": False, "message": str(e)}, status=400)
     return JsonResponse({"success": False, "message": "Invalid request method."}, status=405)
+
+
+@csrf_exempt
+def cancel_grooming_booking(request):
+    try:
+        if request.method != 'POST':
+            return JsonResponse({"error": "POST method required"}, status=405)
+
+        data = json.loads(request.body)
+        booking_id = data.get("bookingId")
+        cancellation_reason = data.get("reason")
+
+        if not booking_id or not cancellation_reason:
+            return JsonResponse({"error": "Booking ID and cancellation reason are required"}, status=400)
+
+        # Find the booking
+        booking = GroomingBooking.objects.filter(id=booking_id).first()
+        if not booking:
+            return JsonResponse({"error": "Booking not found"}, status=404)
+
+        # Update the status and reason
+        booking.status = "2"
+        booking.cancellation_reason = cancellation_reason
+        booking.save()
+
+        # Create refund entry
+        refund = customerRefund.objects.create(
+            userId=booking.userid,
+            amount=booking.price,
+            date=timezone.now().strftime("%Y-%m-%d"),
+            service_center=booking.serviceCenter,
+            service="Grooming session"
+        )
+
+        return JsonResponse({"message": "Booking cancelled and refund issued successfully"}, status=200)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+    
+
+@csrf_exempt
+def cancel_doctor_booking(request):
+    try:
+        if request.method != 'POST':
+            return JsonResponse({"error": "POST method required"}, status=405)
+
+        data = json.loads(request.body)
+        booking_id = data.get("bookingId")
+        cancellation_reason = data.get("reason")
+
+        if not booking_id or not cancellation_reason:
+            return JsonResponse({"error": "Booking ID and cancellation reason are required"}, status=400)
+
+        booking = DoctorBooking.objects.filter(id=booking_id).first()
+        if not booking:
+            return JsonResponse({"error": "Booking not found"}, status=404)
+
+        booking.status = "2"
+        booking.cancellation_reason = cancellation_reason
+        booking.save()
+
+        refund = customerRefund.objects.create(
+            userId=booking.userid,
+            amount=booking.fees,
+            date=timezone.now().strftime("%Y-%m-%d"),
+            service_center=booking.serviceCenter,
+            service="Doctor consultation"
+        )
+        return JsonResponse({"message": "Booking cancelled successfully"}, status=200)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+@csrf_exempt
+def cancel_trainer_booking(request):
+    try:
+        if request.method != 'POST':
+            return JsonResponse({"error": "POST method required"}, status=405)
+
+        data = json.loads(request.body)
+        booking_id = data.get("bookingId")
+        cancellation_reason = data.get("reason")
+
+        if not booking_id or not cancellation_reason:
+            return JsonResponse({"error": "Booking ID and cancellation reason are required"}, status=400)
+
+        booking = TrainerBooking.objects.filter(id=booking_id).first()
+        if not booking:
+            return JsonResponse({"error": "Booking not found"}, status=404)
+
+        booking.status = "2"
+        booking.cancellation_reason = cancellation_reason
+        booking.save()
+
+        refund = customerRefund.objects.create(
+            userId=booking.userid,
+            amount=booking.fees,
+            date=timezone.now().strftime("%Y-%m-%d"),
+            service_center=booking.serviceCenter,
+            service="Training session"
+        )
+
+        return JsonResponse({"message": "Booking cancelled successfully"}, status=200)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+@csrf_exempt
+def view_user_refunds(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+        refunds = customerRefund.objects.filter(userId=user)
+
+        refund_list = [
+            {
+                "amount": refund.amount,
+                "service": refund.service,
+                "date": refund.date,
+                "service_center": refund.service_center
+            }
+            for refund in refunds
+        ]
+
+        return JsonResponse({"refunds": refund_list}, status=200)
+    
+    except User.DoesNotExist:
+        return JsonResponse({"error": "User not found"}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)

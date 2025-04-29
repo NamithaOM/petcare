@@ -10,22 +10,27 @@ export default function DoctorsList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchDoctors();
+    const storedUserId = localStorage.getItem("user_id");
+    if (storedUserId) {
+      fetchDoctors(storedUserId);
+    }
   }, []);
-
-  const fetchDoctors = async () => {
+  
+  
+  const fetchDoctors = async (userId) => {
     try {
-      const response = await fetch(baseUrl + "listDoctors/");
+      const response = await fetch(`${baseUrl}listDoctors/?id=${userId}`);
       const data = await response.json();
       if (response.ok) {
         setDoctors(data);
       } else {
-        setError(data.error);
+        setError(data.error || "Error fetching doctors");
       }
     } catch (error) {
       setError("Error fetching doctors");
     }
   };
+  
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this doctor?")) return;

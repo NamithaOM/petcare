@@ -10,6 +10,7 @@ export default function ServiceList() {
     servicename: "",
     serviceimage: null,
   });
+  const [errorMessage, setErrorMessage] = useState(""); // Error message state
 
   // Fetch services from backend
   useEffect(() => {
@@ -32,6 +33,22 @@ export default function ServiceList() {
   // Handle form submission (Create or Update)
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Validation checks
+    if (!formData.servicename) {
+      setErrorMessage("Service name is required.");
+      return;
+    }
+
+    // If service image is required (optional check)
+    if (!formData.serviceimage) {
+      setErrorMessage("Service image is required.");
+      return;
+    }
+
+    // Clear any previous error messages
+    setErrorMessage("");
+
     const data = new FormData();
     data.append("servicename", formData.servicename);
     if (formData.serviceimage) {
@@ -126,6 +143,9 @@ export default function ServiceList() {
                       onChange={handleChange}
                     />
                   </div>
+                  {errorMessage && (
+                    <div className="alert alert-danger mt-2">{errorMessage}</div>
+                  )}
                   <button
                     type="submit"
                     className="btn btn-primary btn-user btn-block"

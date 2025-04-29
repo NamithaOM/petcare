@@ -106,7 +106,7 @@ export default function AddAccessory() {
             )}
             {message && <div className="alert alert-danger">{message}</div>}
             <form
-              className="mt-4"
+              className="mt-4 mb-4"
               onSubmit={handleSubmit}
               encType="multipart/form-data"
             >

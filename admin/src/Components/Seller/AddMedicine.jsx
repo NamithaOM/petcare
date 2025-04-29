@@ -125,7 +125,7 @@ export default function AddMedicine() {
             {message && <div className="alert alert-danger">{message}</div>}
 
             <form
-              className="mt-4"
+              className="mt-4 mb-4"
               onSubmit={handleSubmit}
               encType="multipart/form-data"
             >
@@ -259,8 +259,8 @@ export default function AddMedicine() {
                   required
                 ></textarea>
               </div>
-              <button type="submit" className="btn btn-success btn-block">
-                Submit
+              <button type="submit" className="btn btn-primary">
+                                Submit
               </button>
             </form>
           </div>

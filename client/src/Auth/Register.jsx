@@ -20,10 +20,31 @@ export default function Register() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const validateForm = () => {
+    if (formData.contact.length !== 10) {
+      setError('Contact number must be 10 digits');
+      return false;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Please enter a valid email address');
+      return false;
+    }
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
     setError('');
+
+    if (!validateForm()) {
+      return;
+    }
 
     try {
       const response = await fetch(`${baseUrl}createCustomer/`, {
@@ -93,7 +114,7 @@ export default function Register() {
                           <div className="col-md-6">
                             <div className="form-group">
                               <label className="label" htmlFor="contact">Contact</label>
-                              <input type="text" className="form-control" name="contact" id="contact" value={formData.contact} onChange={handleChange} required />
+                              <input type="number" className="form-control" name="contact" id="contact" value={formData.contact} onChange={handleChange} required />
                             </div>
                           </div>
                           <div className="col-md-12">
@@ -102,7 +123,7 @@ export default function Register() {
                               <textarea className="form-control" name="address" id="address" value={formData.address} onChange={handleChange} required />
                             </div>
                           </div>
-                     
+                         
                           <div className="col-md-12">
                             <div className="form-group">
                               <input type="submit" value="Register" className="btn btn-primary" />
@@ -113,8 +134,7 @@ export default function Register() {
                     </div>
                   </div>
                   <div className="col-md-5 d-flex align-items-stretch">
-                    <div className="info-wrap w-100 p-5 img" style={{ backgroundImage: "url('assets/images/img.jpg')" }}>
-                    </div>
+                    <div className="info-wrap w-100 p-5 img" style={{ backgroundImage: "url('assets/images/img.jpg')" }}></div>
                   </div>
                 </div>
               </div>

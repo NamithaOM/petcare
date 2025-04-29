@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Sidebar from "../Auth/Sidebar";
 import Header from "../Auth/Header";
 import { baseUrl } from "../../util/BaseUrl";
@@ -7,6 +7,7 @@ export default function PetsList() {
   const [pets, setPets] = useState([]);
   const [formData, setFormData] = useState({ petname: "", petimage: null });
   const [message, setMessage] = useState("");
+  const formRef = useRef(null); // Create a reference to the form
 
   // Fetch pets list
   useEffect(() => {
@@ -33,9 +34,16 @@ export default function PetsList() {
     }
   };
 
+  // Handle form submission with validation
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
+
+    // Check if form is valid
+    if (!formRef.current.checkValidity()) {
+      setMessage("Please fill out all required fields");
+      return;
+    }
 
     const formPayload = new FormData();
     formPayload.append("petname", formData.petname);
@@ -52,7 +60,7 @@ export default function PetsList() {
       const data = await response.json();
       if (response.ok) {
         setMessage(data.message);
-        setFormData({ petname: "", petimage: null }); // reset form
+        setFormData({ petname: "", petimage: null }); // Reset form
         fetchPets();
       } else {
         setMessage(data.error || "Something went wrong");
@@ -69,20 +77,19 @@ export default function PetsList() {
     if (newImage) {
       formPayload.append("petimage", newImage);
     }
-  
+
     try {
       const response = await fetch(baseUrl + `update_pet/${petId}/`, {
-        method: "POST", // use POST or PUT, depending on your Django view
+        method: "POST",
         body: formPayload,
       });
-  
+
       const data = await response.json();
       if (response.ok) {
         setMessage(data.message);
         fetchPets(); // Refresh the list
-  
-        // Reset the form data after submission (clear file input too)
-        setFormData({ petname: newName, petimage: null });
+
+        setFormData({ petname: newName, petimage: null }); // Reset the form
       } else {
         setMessage(data.error || "Something went wrong");
       }
@@ -90,8 +97,6 @@ export default function PetsList() {
       setMessage("Error updating pet");
     }
   };
-  
-  
 
   // Delete pet
   const handleDelete = async (petId) => {
@@ -127,7 +132,11 @@ export default function PetsList() {
 
               {/* Form */}
               <div className="row mb-5">
-                <form className="pets col-6" onSubmit={handleSubmit}>
+                <form
+                  className="pets col-6"
+                  onSubmit={handleSubmit}
+                  ref={formRef} // Attach the form reference here
+                >
                   <div className="form-group">
                     <input
                       type="text"
@@ -137,6 +146,7 @@ export default function PetsList() {
                       value={formData.petname}
                       onChange={handleChange}
                       placeholder="Enter pet Category"
+                      required
                     />
                   </div>
                   <div className="form-group">
@@ -146,11 +156,13 @@ export default function PetsList() {
                       id="petimage"
                       name="petimage"
                       onChange={handleChange}
+                      required
                     />
                   </div>
                   <button
                     type="submit"
                     className="btn btn-primary btn-user btn-block"
+                    disabled={!formData.petname || !formData.petimage}
                   >
                     Submit
                   </button>
@@ -201,27 +213,28 @@ export default function PetsList() {
                               </td>
 
                               <td>
-  <input
-    type="text"
-    className="form-control mb-2"
-    defaultValue={pet.petname}
-    onBlur={(e) =>
-      handleUpdate(pet.id, e.target.value, null)
-    }
-  />
-  <input
-    type="file"
-    className="form-control"
-    onChange={(e) =>
-      handleUpdate(
-        pet.id,
-        pet.petname,
-        e.target.files[0]
-      )
-    }
-  />
-</td>
-
+                                <input
+                                  type="text"
+                                  className="form-control mb-2"
+                                  defaultValue={pet.petname}
+                                  onBlur={(e) =>
+                                    handleUpdate(pet.id, e.target.value, null)
+                                  }
+                                  required
+                                />
+                                <input
+                                  type="file"
+                                  className="form-control"
+                                  onChange={(e) =>
+                                    handleUpdate(
+                                      pet.id,
+                                      pet.petname,
+                                      e.target.files[0]
+                                    )
+                                  }
+                                  required
+                                />
+                              </td>
 
                               <td>
                                 <button
