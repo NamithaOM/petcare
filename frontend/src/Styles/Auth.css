@@ -1,0 +1,67 @@
+/* Wrapper covers full screen with background */
+.auth-wrapper {
+    background-color: rgba(19, 34, 52);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  
+  /* Card-style login/register box */
+  .auth-box {
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Input fields */
+  .form-control {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+  }
+  
+  .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+  
+  .form-control:focus {
+    border-color: #56b8e6;
+    box-shadow: none;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+  }
+  
+  /* Auth Buttons */
+  .auth-wrapper .btn-light {
+    background-color: #56b8e6 !important; /* Force the background color */
+    color: white !important; /* Force the text color */
+    font-weight: 600;
+    border: none !important; /* Remove any border */
+    transition: background-color 0.3s ease;
+    border-radius: 50px;
+}
+
+.auth-wrapper .btn-light:hover {
+    background-color: #3ca6d6 !important; /* Force hover background color */
+    border: none !important; /* Ensure no border on hover */
+}
+  
+  /* White label styling */
+  label {
+    font-weight: 500;
+  }
+  
+  /* Link styling */
+  a.text-light {
+    color: #56b8e6 !important;
+  }
+  
+  a.text-light:hover {
+    text-decoration: underline;
+  }

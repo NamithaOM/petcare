@@ -1,0 +1,61 @@
+.splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #132234; /* your preferred dark tone */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 1;
+}
+
+.splash-content {
+  text-align: center;
+  color: #56b8e6; /* branding color */
+}
+
+.splash-logo {
+  width: 180px;
+  max-width: 100%;
+  margin-bottom: 1rem;
+}
+
+.splash-title {
+  font-size: 4rem;
+  font-weight: bold;
+  margin: 0;
+  color: #ffffff;
+}
+
+/* Triggered animations */
+.fade-in-up {
+  animation: fadeInUp 1.5s ease-out both;
+}
+
+.fade-out {
+  animation: fadeOut 1s ease-out forwards;
+}
+
+/* Keyframes */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

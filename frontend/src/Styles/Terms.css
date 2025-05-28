@@ -1,0 +1,129 @@
+/* Entire section */
+.terms-section {
+    background-color: #f8f9fa;
+    padding: 3rem 2rem;
+    padding-top: 100px;
+  }
+  
+  /* Parent row alignment */
+  .terms-section .row {
+    height: 100%; /* Ensure the row takes the full height of the section */
+    align-items: flex-start; /* Align the columns to the top */
+  }
+  
+  /* Left image column */
+  .terms-section .terms-fixed-img {
+    height: 80vh !important; /* Force the height */
+    max-height: 80vh !important; /* Ensure it doesn't exceed this height */
+    overflow: hidden !important;
+    padding-right: 0 !important; /* Ensure no spacing */
+    display: flex !important;
+    align-items: center !important;
+  }
+  
+  .terms-section .terms-fixed-img img {
+    height: 100% !important; /* Ensure the image fills the container */
+    width: 100% !important; /* Ensure the image fills the container */
+    object-fit: cover !important; /* Maintain aspect ratio */
+    display: block !important;
+  }
+  
+  .full-height-img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  
+  /* Swiper container */
+  .terms-swiper {
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    height: calc(80vh - 0px); /* Adjust height to align with the image */
+    display: flex;
+    align-items: center; /* Center content vertically */
+    justify-content: center; /* Center content horizontally */
+    margin-top: -50px; /* Move the Swiper upward */
+  }
+  
+  /* Slide content */
+  .terms-content {
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .terms-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #56b8e6;
+    margin-bottom: 1rem;
+  }
+  
+  .terms-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #444;
+  }
+  
+  /* Timestamp */
+  .last-updated {
+    font-size: 0.95rem;
+    color: #888;
+    margin-bottom: 1rem;
+  }
+  
+  /* Slide title */
+  .terms-content h3 {
+    font-size: 1.8rem;
+    color: #000; /* Change title color to black */
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  
+  /* Slide text */
+  .terms-content p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #444;
+  }
+  
+  /* Swiper arrows */
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: #000; /* Change arrow color to black */
+  }
+
+  .swiper-button-next:hover,
+  .swiper-button-prev:hover {
+    color: #333; /* Slightly lighter black on hover */
+  }
+  
+  /* Swiper pagination bullets */
+  .swiper-pagination-bullet {
+    background: #ccc;
+    opacity: 1;
+  }
+  
+  .swiper-pagination-bullet-active {
+    background-color: #56b8e6;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .terms-fixed-img {
+      display: none;
+    }
+  
+    .terms-section {
+      padding: 2rem 1rem;
+    }
+  
+    .terms-swiper {
+      padding: 1rem;
+    }
+  
+    .terms-content {
+      padding: 1.5rem;
+    }
+  }
